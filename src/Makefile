@@ -1,0 +1,14 @@
+CXX = g++
+CFLAGS = -g -std=c++0x -Wall -march=native -O2
+OBJECTS = Assembler.o VirtualMachine.o
+
+all: os
+
+%.o: %.cpp
+	$(CXX) -c $(CXXFLAGS) $<
+
+os: $(OBJECTS) os.cpp
+	$(CXX) -o $@ os.cpp $(OBJECTS)
+
+clean: 
+	$(RM) os *.o
