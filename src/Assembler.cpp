@@ -1,309 +1,211 @@
 //
 //  Assembler.cpp
 //  
-//
-//  Created by Jack Dempsey on 2/16/14.
-//
-//
+
 
 #include "Assembler.hpp"
 
-Assembler(){
+/* Constructor initializes all integer values to 0 so as not to affect sum in Assemble function */
+Assembler():opcode(0),object_code(0),format(0),immediate(0),numRegisters(0),destReg(0),srcReg(0),addr(0),isAddr(0),input = ""{
 }
 ~Assember(){
 }
-vector<int> genObjectCode(std::string instruct){
-    ir.at(8) = 0;
-    for (i = 0; i < 6; ++i){
-        ir.at(i)=0;
+/* We'll probably want to rewrite this to something more sophisticated and workable, but this is just a stand-in for getting input to the assembler */
+void getInput(){
+    std::cin >> input;
+    input =const_cast <std::string> input;
+}
+/* Found this on StackOverflow and haven't tested it yet, but it looked like a cool way to split the input string based on using spaces as delimiters */
+void splitInput(const std::string &inputString, std::vector<std::string> &elems) {
+    char delim = ' ';
+    std::stringstream ss(inputString);
+    std::string item;
+    while (std::getline(ss, item, delim)) {
+        elems.push_back(item);
     }
+}
+/* Takes string representation of operation.  Each if statement governs one or two operations and sets the opcode accordingly, shifting the correct number of bits.  Also sets the number of registers used for that operation and determines if there's an address or constant value. After the if-else if chain, the immediate value is shifted. */
+void getOperation(const std::string &operationString){
     if ((instruct == "load")||(instruct == "loadi")){
+        numRegisters = 1;
+        isAddr = 1;
         if (instruct == "loadi"){
-            ir.at(8) = 1;
+            immediate = 1;
         }
-        for (int i = 0; i < 5; ++i){
-            ir.at(11+i)=0;
-        }
+        opcode = 0 << 11;
     }
     else if ((instruct == "store")){
-        for (int i = 0; i < 5; ++i){
-            if (i == 4){
-                ir.at(11+i) = 1;
-            }
-            else {
-                ir.at(11+i)=0;
-            }
-        }
+        isAddr = 1;
+        numRegisters = 1;
+        opcode = 1 << 11;
     }
     else if ((instruct == "add")||(instruct == "addi")){
+        numRegisters = 2;
         if (instruct == "addi"){
-            ir.at(8) = 1;
+            immediate = 1;
+            numRegisters = 1;
+            isAddr = 1;
         }
-        for (int i = 0; i < 5; ++i){
-            if (i == 3){
-                ir.at(11+i) = 1;
-            }
-            else {
-                ir.at(11+i)=0;
-            }
-        }
+        opcode = 2 << 11;
     }
     else if ((instruct == "addc")||(instruct == "addci")){
+        numRegisters = 2;
         if (instruct == "addci"){
-            ir.at(8) = 1;
+            numRegisters = 1;
+            isAddr = 1;
+            immediate = 1;
         }
-        for (int i = 0; i < 5; ++i){
-            if ((i == 3)||(i==4)){
-                ir.at(11+i) = 1;
-            }
-            else {
-                ir.at(11+i)=0;
-            }
-        }
+        opcode = 3 << 11;
     }
     else if ((instruct == "sub")||(instruct == "subi")){
+        numRegisters = 2;
         if (instruct == "subi"){
-            ir.at(8) = 1;
+            numRegisters = 1;
+            isAddr = 1;
+            immediate = 1;
         }
-        for (int i = 0; i < 5; ++i){
-            if (i == 2){
-                ir.at(11+i) = 1;
-            }
-            else {
-                ir.at(11+i)=0;
-            }
-        }
+        opcode = 4 << 11;
     }
     else if ((instruct == "subc")||(instruct == "subci")){
+        numRegisters = 2;
         if (instruct == "subci"){
-            ir.at(8) = 1;
+            numRegisters = 1;
+            isAddr = 1;
+            immediate = 1;
         }
-        for (int i = 0; i < 5; ++i){
-            if ((i == 2)||(i==4)){
-                ir.at(11+i) = 1;
-            }
-            else {
-                ir.at(11+i)=0;
-            }
-        }
+        opcode = 5 << 11;
     }
     else if ((instruct == "and")||(instruct == "andi")){
+        numRegisters = 2;
         if (instruct == "andi"){
-            ir.at(8) = 1;
+            numRegisters = 1;
+            isAddr = 1;
+            immediate = 1;
         }
-        for (int i = 0; i < 5; ++i){
-            if ((i == 2)||(i==3)){
-                ir.at(11+i) = 1;
-            }
-            else {
-                ir.at(11+i)=0;
-            }
-        }
+        opcode = 6 << 11;
     }
     else if ((instruct == "xor")||(instruct == "xori")){
+        numRegisters = 2;
         if (instruct == "xori"){
-            ir.at(8) = 1;
+            numRegisters = 1;
+            isAddr = 1;
+            immediate = 1;
         }
-        for (int i = 0; i < 5; ++i){
-            if ((i == 2)||(i==3)||(i==4)){
-                ir.at(11+i) = 1;
-            }
-            else {
-                ir.at(11+i)=0;
-            }
-        }
+        opcode = 7 << 11;
     }
     else if (instruct == "compl"){
-        for (int i = 0; i < 5; ++i){
-            if (i == 1){
-                ir.at(11+i) = 1;
-            }
-            else {
-                ir.at(11+i)=0;
-            }
-        }
+        numRegisters = 1;
+        opcode = 8 << 11;
     }
     else if (instruct == "shl"){
-        for (int i = 0; i < 5; ++i){
-            if ((i == 1)||(i == 4)){
-                ir.at(11+i) = 1;
-            }
-            else {
-                ir.at(11+i)=0;
-            }
-        }
+        numRegisters = 1;
+        opcode = 9 << 11;
     }
     else if (instruct == "shla"){
-        for (int i = 0; i < 5; ++i){
-            if ((i == 1)||(i == 3)){
-                ir.at(11+i) = 1;
-            }
-            else {
-                ir.at(11+i)=0;
-            }
-        }
+        numRegisters = 1;
+        opcode = 10 << 11;
     }
     else if (instruct == "shr"){
-        for (int i = 0; i < 5; ++i){
-            if ((i == 1)||(i == 3)||(i == 4)){
-                ir.at(11+i) = 1;
-            }
-            else {
-                ir.at(11+i)=0;
-            }
-        }
+        numRegisters = 1;
+        opcode = 11 << 11;
     }
     else if (instruct == "shra"){
-        for (int i = 0; i < 5; ++i){
-            if ((i == 1)||(i == 2)){
-                ir.at(11+i) = 1;
-            }
-            else {
-                ir.at(11+i)=0;
-            }
-        }
+        numRegisters = 1;
+        opcode = 12 << 11;
     }
-    else if (instruct == "compr"){
-        for (int i = 0; i < 5; ++i){
-            if ((i == 1)||(i == 2)||(i == 4)){
-                ir.at(11+i) = 1;
-            }
-            else {
-                ir.at(11+i)=0;
-            }
-        }
-    }
+
     else if ((instruct == "compr")||(instruct == "compri")){
+        numRegisters = 2;
         if (instruct == "compri"){
-            ir.at(8) = 1;
+            numRegisters = 1;
+            isAddr = 1;
+            immediate = 1;
         }
-        for (int i = 0; i < 5; ++i){
-            if ((i == 1)||(i == 2)||(i == 4)){
-                ir.at(11+i) = 1;
-            }
-            else {
-                ir.at(11+i)=0;
-            }
-        }
+        opcode = 13 << 11;
     }
     else if (instruct == "getstat"){
-        for (int i = 0; i < 5; ++i){
-            if ((i == 1)||(i == 2)||(i == 3)){
-                ir.at(11+i) = 1;
-            }
-            else {
-                ir.at(11+i)=0;
-            }
-        }
+        numRegisters = 1;
+        opcode = 14 << 11;
     }
     else if (instruct == "putstat"){
-        for (int i = 0; i < 5; ++i){
-            if ((i == 1)||(i == 2)||(i == 3)||(i == 4)){
-                ir.at(11+i) = 1;
-            }
-            else {
-                ir.at(11+i)=0;
-            }
-        }
+        numRegisters = 1;
+        opcode = 15 << 11;
     }
     else if (instruct == "jump"){
-        for (int i = 0; i < 5; ++i){
-            if (i == 0){
-                ir.at(11+i) = 1;
-            }
-            else {
-                ir.at(11+i)=0;
-            }
-        }
+        numRegisters = 0;
+        isAddr = 1;
+        opcode = 16 << 11;
     }
     else if (instruct == "jumpl"){
-        for (int i = 0; i < 5; ++i){
-            if ((i == 0)||(i == 4)){
-                ir.at(11+i) = 1;
-            }
-            else {
-                ir.at(11+i)=0;
-            }
-        }
+        numRegisters = 0;
+        isAddr = 1;
+        opcode = 17 << 11;
     }
     else if (instruct == "jumpe"){
-        for (int i = 0; i < 5; ++i){
-            if ((i == 0)||(i == 3)){
-                ir.at(11+i) = 1;
-            }
-            else {
-                ir.at(11+i)=0;
-            }
-        }
+        numRegisters = 0;
+        isAddr = 1;
+        opcode = 18 << 11;
     }
     else if (instruct == "jumpg"){
-        for (int i = 0; i < 5; ++i){
-            if ((i == 0)||(i == 3)||(i == 4)){
-                ir.at(11+i) = 1;
-            }
-            else {
-                ir.at(11+i)=0;
-            }
-        }
+        numRegisters = 0;
+        isAddr = 1;
+        opcode = 19 << 11;
     }
     else if (instruct == "call"){
-        for (int i = 0; i < 5; ++i){
-            if ((i == 0)||(i == 2)){
-                ir.at(11+i) = 1;
-            }
-            else {
-                ir.at(11+i)=0;
-            }
-        }
+        numRegisters = 0;
+        opcode = 20 << 11;
     }
     else if (instruct == "return"){
-        for (int i = 0; i < 5; ++i){
-            if ((i == 0)||(i == 2)||(i == 4)){
-                ir.at(11+i) = 1;
-            }
-            else {
-                ir.at(11+i)=0;
-            }
-        }
+        numRegisters = 0;
+        opcode = 21 << 11;
     }
     else if (instruct == "read"){
-        for (int i = 0; i < 5; ++i){
-            if ((i == 0)||(i == 2)||(i == 3)){
-                ir.at(11+i) = 1;
-            }
-            else {
-                ir.at(11+i)=0;
-            }
-        }
+        numRegisters = 1;
+        opcode = 22 << 11;
     }
     else if (instruct == "write"){
-        for (int i = 0; i < 5; ++i){
-            if ((i == 0)||(i == 2)||(i == 3)||(i == 4)){
-                ir.at(11+i) = 1;
-            }
-            else {
-                ir.at(11+i)=0;
-            }
-        }
+        numRegisters = 1;
+        opcode = 23 << 11;
     }
     else if (instruct == "halt"){
-        for (int i = 0; i < 5; ++i){
-            if ((i == 0)||(i == 1)){
-                ir.at(11+i) = 1;
-            }
-            else {
-                ir.at(11+i)=0;
-            }
-        }
+        numRegisters = 0;
+        opcode = 24 << 11;
     }
     else if (instruct == "noop"){
-        for (int i = 0; i < 5; ++i){
-            if ((i == 0)||(i == 1)||(i == 4)){
-                ir.at(11+i) = 1;
-            }
-            else {
-                ir.at(11+i)=0;
-            }
+        numRegisters = 0;
+        opcode = 25 << 11;
+    }
+    
+    // Shift of immediate value
+    immediate = immediate << 8;
+}
+/* Takes string of destination register and converts to an int, then shifts the correct number of bits.  Note: This relies on the C++11 function std::stoi. */
+void getDestRegister(const std::string &registerString){
+        destReg = std::stoi(registerString);
+        destReg = destReg << 9;
+}
+/* Same as above, except for the source register. */
+void getSrcRegister(const std::string &registerString){
+        srcReg = std::stoi(registerString);
+        srcReg = srcReg << 6;
+}
+/* Same as above, except for the address or constant, which does not need to be shifted. */
+void getAddress(const std::string &addrString){
+    addr = std::stoi(addrString);
+}
+/* Assemble function to use the others to generate the actual object code. Starts by splitting the input string into its components, then fins out which operation is to be performed.  This will determine the number of registers involved and whether there's an address or a constant, and Assemble calls the some combination of the three functions above based on that. At the end, we sum all of the parts of object_code together to get the decimal representation.  Note that the components that are unused for that operation are initialized to 0 in the constructor, and will not affect this sum. */
+int Assemble(){
+    splitInput(input);
+    getOperation(instructParts.at(0));
+    if (numRegisters > 0){
+        getDestRegister(instructParts.at(1));
+        if (numRegisters == 2){
+            getSrcRegister(instructParts.at(2));
         }
     }
+    if (isAddr == 1){
+        getAddress(instructParts.at(2));
+    }
+    object_code = opcode + immediate + srcReg + destReg + addr;
+    return object_code;
 }
