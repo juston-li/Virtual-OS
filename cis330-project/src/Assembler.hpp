@@ -10,12 +10,23 @@
 #define ____Assembler__
 
 #include <iostream>
+#include <std.bool.h>
 class ASsembler {
 public:
     Assembler::Assembler();
     Assembler::~Assember();
-    vector<int> Assembler::genObjectCode(std::string instruct);
+    void Assembler::splitInput(const std::string &inputString, std::vector<std::string> &elems);
+    void Assembler::getOperation(std::string operationString);
+    void Assembler::getRegisters(Std::string registerString);
+
 private:
-    vector<int> ir(16);
+    int op[5];
+    int immediate;
+    int numRegisters;
+    std::bool isAddr;
+    int reg1;
+    int reg2;
+    int addr;
+    vector<std::string> instructParts;
 };
 #endif /* defined(____Assembler__) */

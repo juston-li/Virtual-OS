@@ -8,301 +8,329 @@
 
 #include "Assembler.hpp"
 
-Assembler(){
+Assembler():op({0,0,0,0,0}),immediate(0),numRegisters(0),isAddr(false){
 }
 ~Assember(){
 }
-vector<int> genObjectCode(std::string instruct){
-    ir.at(8) = 0;
-    for (i = 0; i < 6; ++i){
-        ir.at(i)=0;
+void splitInput(const std::string &inputString, std::vector<std::string> &elems) {
+    char delim = ' ';
+    std::stringstream ss(inputString);
+    std::string item;
+    while (std::getline(ss, item, delim)) {
+        elems.push_back(item);
     }
+}
+void getOperation(std::string operationString){
     if ((instruct == "load")||(instruct == "loadi")){
+        numRegisters = 1;
         if (instruct == "loadi"){
-            ir.at(8) = 1;
+            immediate = 1;
         }
         for (int i = 0; i < 5; ++i){
-            ir.at(11+i)=0;
+            op[i]=0;
         }
     }
     else if ((instruct == "store")){
+        numRegisters = 1;
         for (int i = 0; i < 5; ++i){
             if (i == 4){
-                ir.at(11+i) = 1;
+                op[i] = 1;
             }
             else {
-                ir.at(11+i)=0;
+                op[i]=0;
             }
         }
     }
     else if ((instruct == "add")||(instruct == "addi")){
+        numRegisters = 2;
         if (instruct == "addi"){
-            ir.at(8) = 1;
+            immediate = 1;
+            numRegisters = 1;
         }
         for (int i = 0; i < 5; ++i){
             if (i == 3){
-                ir.at(11+i) = 1;
+                op[i] = 1;
             }
             else {
-                ir.at(11+i)=0;
+                op[i]=0;
             }
         }
     }
     else if ((instruct == "addc")||(instruct == "addci")){
+        numRegisters = 2;
         if (instruct == "addci"){
-            ir.at(8) = 1;
+            numRegisters = 1;
+            immediate = 1;
         }
         for (int i = 0; i < 5; ++i){
             if ((i == 3)||(i==4)){
-                ir.at(11+i) = 1;
+                op[i] = 1;
             }
             else {
-                ir.at(11+i)=0;
+                op[i]=0;
             }
         }
     }
     else if ((instruct == "sub")||(instruct == "subi")){
+        numRegisters = 2;
         if (instruct == "subi"){
-            ir.at(8) = 1;
+            numRegisters = 1;
+            immediate = 1;
         }
         for (int i = 0; i < 5; ++i){
             if (i == 2){
-                ir.at(11+i) = 1;
+                op[i] = 1;
             }
             else {
-                ir.at(11+i)=0;
+                op[i]=0;
             }
         }
     }
     else if ((instruct == "subc")||(instruct == "subci")){
+        numRegisters = 2;
         if (instruct == "subci"){
-            ir.at(8) = 1;
+            numRegisters = 1;
+            immediate = 1;
         }
         for (int i = 0; i < 5; ++i){
             if ((i == 2)||(i==4)){
-                ir.at(11+i) = 1;
+                op[i] = 1;
             }
             else {
-                ir.at(11+i)=0;
+                op[i]=0;
             }
         }
     }
     else if ((instruct == "and")||(instruct == "andi")){
+        numRegisters = 2;
         if (instruct == "andi"){
-            ir.at(8) = 1;
+            numRegisters = 1;
+            immediate = 1;
         }
         for (int i = 0; i < 5; ++i){
             if ((i == 2)||(i==3)){
-                ir.at(11+i) = 1;
+                op[i] = 1;
             }
             else {
-                ir.at(11+i)=0;
+                op[i]=0;
             }
         }
     }
     else if ((instruct == "xor")||(instruct == "xori")){
+        numRegisters = 2;
         if (instruct == "xori"){
-            ir.at(8) = 1;
+            numRegisters = 1;
+            immediate = 1;
         }
         for (int i = 0; i < 5; ++i){
             if ((i == 2)||(i==3)||(i==4)){
-                ir.at(11+i) = 1;
+                op[i] = 1;
             }
             else {
-                ir.at(11+i)=0;
+                op[i]=0;
             }
         }
     }
     else if (instruct == "compl"){
+        numRegisters = 1;
         for (int i = 0; i < 5; ++i){
             if (i == 1){
-                ir.at(11+i) = 1;
+                op[i] = 1;
             }
             else {
-                ir.at(11+i)=0;
+                op[i]=0;
             }
         }
     }
     else if (instruct == "shl"){
+        numRegisters = 1;
         for (int i = 0; i < 5; ++i){
             if ((i == 1)||(i == 4)){
-                ir.at(11+i) = 1;
+                op[i] = 1;
             }
             else {
-                ir.at(11+i)=0;
+                op[i]=0;
             }
         }
     }
     else if (instruct == "shla"){
+        numRegisters = 1;
         for (int i = 0; i < 5; ++i){
             if ((i == 1)||(i == 3)){
-                ir.at(11+i) = 1;
+                op[i] = 1;
             }
             else {
-                ir.at(11+i)=0;
+                op[i]=0;
             }
         }
     }
     else if (instruct == "shr"){
+        numRegisters = 1;
         for (int i = 0; i < 5; ++i){
             if ((i == 1)||(i == 3)||(i == 4)){
-                ir.at(11+i) = 1;
+                op[i] = 1;
             }
             else {
-                ir.at(11+i)=0;
+                op[i]=0;
             }
         }
     }
     else if (instruct == "shra"){
+        numRegisters = 1;
         for (int i = 0; i < 5; ++i){
             if ((i == 1)||(i == 2)){
-                ir.at(11+i) = 1;
+                op[i] = 1;
             }
             else {
-                ir.at(11+i)=0;
+                op[i]=0;
             }
         }
     }
-    else if (instruct == "compr"){
-        for (int i = 0; i < 5; ++i){
-            if ((i == 1)||(i == 2)||(i == 4)){
-                ir.at(11+i) = 1;
-            }
-            else {
-                ir.at(11+i)=0;
-            }
-        }
-    }
+
     else if ((instruct == "compr")||(instruct == "compri")){
+        numRegisters = 2;
         if (instruct == "compri"){
-            ir.at(8) = 1;
+            numRegisters = 1;
+            immediate = 1;
         }
         for (int i = 0; i < 5; ++i){
             if ((i == 1)||(i == 2)||(i == 4)){
-                ir.at(11+i) = 1;
+                op[i] = 1;
             }
             else {
-                ir.at(11+i)=0;
+                op[i]=0;
             }
         }
     }
     else if (instruct == "getstat"){
+        numRegisters = 1;
         for (int i = 0; i < 5; ++i){
             if ((i == 1)||(i == 2)||(i == 3)){
-                ir.at(11+i) = 1;
+                op[i] = 1;
             }
             else {
-                ir.at(11+i)=0;
+                op[i]=0;
             }
         }
     }
     else if (instruct == "putstat"){
+        numRegisters = 1;
         for (int i = 0; i < 5; ++i){
             if ((i == 1)||(i == 2)||(i == 3)||(i == 4)){
-                ir.at(11+i) = 1;
+                op[i] = 1;
             }
             else {
-                ir.at(11+i)=0;
+                op[i]=0;
             }
         }
     }
     else if (instruct == "jump"){
+        numRegisters = 0;
         for (int i = 0; i < 5; ++i){
             if (i == 0){
-                ir.at(11+i) = 1;
+                op[i] = 1;
             }
             else {
-                ir.at(11+i)=0;
+                op[i]=0;
             }
         }
     }
     else if (instruct == "jumpl"){
+        numRegisters = 0;
         for (int i = 0; i < 5; ++i){
             if ((i == 0)||(i == 4)){
-                ir.at(11+i) = 1;
+                op[i]) = 1;
             }
             else {
-                ir.at(11+i)=0;
+                op[i]=0;
             }
         }
     }
     else if (instruct == "jumpe"){
+        numRegisters = 0;
         for (int i = 0; i < 5; ++i){
             if ((i == 0)||(i == 3)){
-                ir.at(11+i) = 1;
+                op[i] = 1;
             }
             else {
-                ir.at(11+i)=0;
+                op[i]=0;
             }
         }
     }
     else if (instruct == "jumpg"){
+        numRegisters = 0;
         for (int i = 0; i < 5; ++i){
             if ((i == 0)||(i == 3)||(i == 4)){
-                ir.at(11+i) = 1;
+                op[i] = 1;
             }
             else {
-                ir.at(11+i)=0;
+                op[i]=0;
             }
         }
     }
     else if (instruct == "call"){
+        numRegisters = 0;
         for (int i = 0; i < 5; ++i){
             if ((i == 0)||(i == 2)){
-                ir.at(11+i) = 1;
+                op[i] = 1;
             }
             else {
-                ir.at(11+i)=0;
+                op[i]=0;
             }
         }
     }
     else if (instruct == "return"){
+        numRegisters = 0;
         for (int i = 0; i < 5; ++i){
             if ((i == 0)||(i == 2)||(i == 4)){
-                ir.at(11+i) = 1;
+                op[i] = 1;
             }
             else {
-                ir.at(11+i)=0;
+                op[i]=0;
             }
         }
     }
     else if (instruct == "read"){
+        numRegisters = 1;
         for (int i = 0; i < 5; ++i){
             if ((i == 0)||(i == 2)||(i == 3)){
-                ir.at(11+i) = 1;
+                op[i] = 1;
             }
             else {
-                ir.at(11+i)=0;
+                iop[i]=0;
             }
         }
     }
     else if (instruct == "write"){
+        numRegisters = 1;
         for (int i = 0; i < 5; ++i){
             if ((i == 0)||(i == 2)||(i == 3)||(i == 4)){
-                ir.at(11+i) = 1;
+                op[i] = 1;
             }
             else {
-                ir.at(11+i)=0;
+                op[i]=0;
             }
         }
     }
     else if (instruct == "halt"){
+        numRegisters = 0;
         for (int i = 0; i < 5; ++i){
             if ((i == 0)||(i == 1)){
-                ir.at(11+i) = 1;
+                op[i] = 1;
             }
             else {
-                ir.at(11+i)=0;
+                op[i]=0;
             }
         }
     }
     else if (instruct == "noop"){
+        numRegisters = 0;
         for (int i = 0; i < 5; ++i){
             if ((i == 0)||(i == 1)||(i == 4)){
-                ir.at(11+i) = 1;
+                op[i] = 1;
             }
             else {
-                ir.at(11+i)=0;
+                op[i]=0;
             }
         }
     }
