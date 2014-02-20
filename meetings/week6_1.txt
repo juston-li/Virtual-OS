@@ -1,0 +1,53 @@
+	Group members present
+		Joseph Bakke, 
+	Group members absent
+
+
+	Meeting Agenda
+	--------------
+
+		- Get to know each other
+			Name, year, reason for CS maybe?
+			Go over programming experience
+		- Give bitbucket access to project repo
+		- Decide on project
+			Operating System project
+			Client-Server project?
+		- Do Project Proposal
+			Team Information
+				Team Name
+				Team leader name
+				Team member names
+
+			Project Information
+				Project Title
+				Short project description
+				Implementation approach
+				Risk Management plan
+
+		- Figure out good meeting times for the future
+
+	Meeting Notes
+	-------------
+		Definitely doing Operating System Project
+		bitbucket access given to everyone
+
+		Languages we plan to use:
+			- C++
+
+		Third Party Software
+			- None as of now
+		Team Coordination Approach:
+			Meeting once a week on Tuesdays at 5:30pm, decide if we need to meet on Thursdays as well
+			Use a group facebook message, or maybe a google hangout dealio
+
+			Week 1
+				Get familiar with the devlopment project. Understand the workload and what we have to do to complete Phase I. Initial distribution of workload
+
+			Week 2 && Week 3
+				Development of Phase I then debugging. If we have extra time we'll move onto Phase II
+
+			Week 4
+				Continue development and put together presentation
+
+		Going to meet every Tuesday at 5:30. 
