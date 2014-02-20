@@ -38,3 +38,55 @@ void VirtualMachine::execute() {
 	//
 	// array of function pointers?  instruction[opcode] = function
 }
+void VirtualMachine::load() {
+}
+void VirtualMachine::store(){
+}
+void VirtualMachine::add(){
+}
+void VirtualMachine::addc(){
+}
+void VirtualMachine::sub(){
+}
+void VirtualMachine::subc(){
+}
+void VirtualMachine::and_op(){
+}
+void VirtualMachine::xor_op(){
+}
+void VirtualMachine::compl_op(){
+}
+void VirtualMachine::shl(){
+}
+void VirtualMachine::shla(){
+}
+void VirtualMachine::shra(){
+}
+void VirtualMachine::compr(){
+}
+void VirtualMachine::compri(){
+}
+void VirtualMachine::getstat(){
+}
+void VirtualMachine::putstat(){
+}
+void VirtualMachine::jump(){
+}
+void VirtualMachine::jumpl(){
+}
+void VirtualMachine::jumpe(){
+}
+void VirtualMachine::jumpg(){
+}
+void VirtualMachine::call(){
+}
+void VirtualMachine::return_op(){
+}
+void VirtualMachine::read(){
+}
+void VirtualMachine::write(){
+}
+void VirtualMachine::halt(){
+}
+void VirtualMachine::noop(){
+}
