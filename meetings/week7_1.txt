@@ -1,0 +1,50 @@
+	Group members present
+		Joseph Bakke, Juston, Eric, Jack
+	Group members absent
+
+
+	Discuss Design and how the layout works
+		Three main components
+
+		Assembler
+			Takes an assembly .s file as an input and outputs an object .o file
+
+			Class Variables 
+				OP Code
+				Immediate Value
+				Destination Register
+				Source Register
+				Address
+				Constant
+
+			Write functions for
+
+				Get the Instruction (Pass the file name in here and open it)
+					Iterate through the assembly file line by line and get the instruction				
+					Break the instruction string into an Array or something
+
+				Op code
+					Set the OP Code
+					Set the immediate Value
+
+				Registers
+					set registers based on immediate value / op code
+
+				Constant/Address
+					Determine if we're setting an address or a constant based on immediate value
+
+				Build the vector
+					Take all the information we've put together based off of the previous functions and build a vector
+					Write that vector to the .o file
+					
+		Virtual Machine (CPU)
+			Takes the outputted object code and runs it.
+
+			TOP:	instruction fetch (ir ← mempc)
+					pc++
+					set OP, RD, I, RS, ADDR, CONST from ir
+					execute the instruction specified by OP and I
+					go to TOP
+
+			Need to email Prof Norris to see if we are supposed to actually simulate ALU (mathematically) or just
+			write functions to make it seem like that's what's happening
