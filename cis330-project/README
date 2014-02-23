@@ -1,3 +1,0 @@
-'make os' to compile virtual os executables
-'make test' to compile test executables
-'make' for both
