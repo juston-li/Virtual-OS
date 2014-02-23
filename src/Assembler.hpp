@@ -20,14 +20,10 @@ public:
     void getAddress(const std::string &addrString);
     int Assemble();
 private:
-    // The original instruction string input to the assembler
-    std::string input;
-    // A flag flipped if the instruction include an address of constant value
-    int isAddr;
-    // The decimal representation of the object code
-    int object_code;
     // The decimal value of the operation code
     int opcode;
+    // The decimal representation of the object code
+    int object_code;
     // The decimal value of the immediate value
     int immediate;
     // How many registers are used in the instruction
@@ -38,6 +34,10 @@ private:
     int srcReg;
     // The decimal value of the constant or address
     int addr;
+    // A flag flipped if the instruction include an address of constant value
+    int isAddr;
+    // The original instruction string input to the assembler
+    std::string input;
     // A vector to hold different parts of the input string
     std::vector<std::string> instructParts;
 };
