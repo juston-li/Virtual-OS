@@ -18,8 +18,9 @@ int main(int argc,char *argv[]) {
 	//as.run();
 	str_size = program.size();
 	program.replace(str_size-1,1,"o"); //change to .o
-	vm.load_mem(program);
-	//vm.execute();
+	if(vm.load_mem(program)) { //Returns 0 if prog not found or not enough mem
+		vm.execute();
+	}
 }
 
 
