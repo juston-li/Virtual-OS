@@ -2,6 +2,8 @@
 #include <fstream>
 #include <string>
 #include "VirtualMachine.h"
+#define likely(x)       __builtin_expect((x),1)
+#define unlikely(x)     __builtin_expect((x),0)
 
 VirtualMachine::VirtualMachine() {
 	pc = ir = sr = sp = clock = base = limit = 0;
@@ -10,7 +12,7 @@ VirtualMachine::VirtualMachine() {
 
 int VirtualMachine::load_mem(string executable) {
 	int code;
-	mem.resize(256);
+	mem.resize(260); //max is 256 but buffer in case
 	ifstream program(executable.c_str());
 
 	/*set base register*/
@@ -21,16 +23,17 @@ int VirtualMachine::load_mem(string executable) {
 			cout << code << '\n'; //testing
 			mem[i] = code;
 			limit = i; //set the limit register
+			if (unlikely(limit == 256)) {
+				cerr << "Memory overflow\n";  
+				return 0;
+			}
 		}
 		program.close();
 	} else {
 		cerr << "Unable to load program\n";
 		return 0; 
 	} 
-	if (limit >= 256) { //FIXME:Vector would likely go out of bounds and crash if this is the case, catch earlier
-		cerr << "Not enough memory\n";  
-		return 0;
-	}
+
 	return 1;
 }
 
@@ -48,7 +51,7 @@ void VirtualMachine::execute() {
 	while(halt_flag != true) {
 		
 		//pc must be within program memory bounds
-		if(pc<base || pc > limit) {
+		if (unlikely(pc < base || pc > limit)) {
 			cerr << "Segmentation Fault\n"; 
 			break;
 		}
