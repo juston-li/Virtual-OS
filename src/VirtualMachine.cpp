@@ -31,6 +31,7 @@ int VirtualMachine::load_mem(string executable) {
 		cerr << "Not enough memory\n";  
 		return 0;
 	}
+	return 1;
 }
 
 void VirtualMachine::execute() {
