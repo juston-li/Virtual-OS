@@ -4,33 +4,39 @@
 
 
 #include "Assembler.hpp"
+#include <vector>
+#include <string>
+#include <sstream>
 
 /* Constructor initializes all integer values to 0 so as not to affect sum in Assemble function */
-Assembler():opcode(0),object_code(0),format(0),immediate(0),numRegisters(0),destReg(0),srcReg(0),addr(0),isAddr(0),input = ""{
+Assembler::Assembler():opcode(0),object_code(0),immediate(0),numRegisters(0),destReg(0),srcReg(0),addr(0),isAddr(0),input(""){
+    std::cout<<"Assembler constructed, initialized\n"<<std::endl;
 }
-~Assember(){
+Assembler::~Assembler(){
 }
 /* We'll probably want to rewrite this to something more sophisticated and workable, but this is just a stand-in for getting input to the assembler */
-void getInput(){
-    std::cin >> input;
-    input =const_cast <std::string> input;
+void Assembler::getInput(){
+    getline(std::cin,input,'\n');
+    std::cout << input << std::endl;
 }
 /* Found this on StackOverflow and haven't tested it yet, but it looked like a cool way to split the input string based on using spaces as delimiters */
-void splitInput(const std::string &inputString, std::vector<std::string> &elems) {
-    char delim = ' ';
+void Assembler::splitInput(const std::string &inputString, std::vector<std::string> &elems) {
+    std::cout<<inputString<<std::endl;
     std::stringstream ss(inputString);
-    std::string item;
-    while (std::getline(ss, item, delim)) {
-        elems.push_back(item);
+    std::string buf;
+    while (ss>>buf) {
+        elems.push_back(buf);
+        std::cout<<buf<<std::endl;
     }
 }
 /* Takes string representation of operation.  Each if statement governs one or two operations and sets the opcode accordingly, shifting the correct number of bits.  Also sets the number of registers used for that operation and determines if there's an address or constant value. After the if-else if chain, the immediate value is shifted. */
-void getOperation(const std::string &operationString){
+void Assembler::getOperation(const std::string &instruct){
     if ((instruct == "load")||(instruct == "loadi")){
         numRegisters = 1;
         isAddr = 1;
         if (instruct == "loadi"){
             immediate = 1;
+            std::cout<<"operation is loadi \n"<<std::endl;
         }
         opcode = 0 << 11;
     }
@@ -178,28 +184,32 @@ void getOperation(const std::string &operationString){
     
     // Shift of immediate value
     immediate = immediate << 8;
+    std::cout<<"Shifted immediate value\n"<<std::endl;
 }
 /* Takes string of destination register and converts to an int, then shifts the correct number of bits.  Note: This relies on the C++11 function std::stoi. */
-void getDestRegister(const std::string &registerString){
-        destReg = std::stoi(registerString);
-        destReg = destReg << 9;
+void Assembler::getDestRegister(const std::string &registerString){
+    destReg = std::stoi(registerString);
+    destReg = destReg << 9;
 }
 /* Same as above, except for the source register. */
-void getSrcRegister(const std::string &registerString){
-        srcReg = std::stoi(registerString);
-        srcReg = srcReg << 6;
+void Assembler::getSrcRegister(const std::string &registerString){
+    srcReg = std::stoi(registerString);
+    srcReg = srcReg << 6;
 }
 /* Same as above, except for the address or constant, which does not need to be shifted. */
-void getAddress(const std::string &addrString){
+void Assembler::getAddress(const std::string &addrString){
     addr = std::stoi(addrString);
 }
 /* Assemble function to use the others to generate the actual object code. Starts by splitting the input string into its components, then fins out which operation is to be performed.  This will determine the number of registers involved and whether there's an address or a constant, and Assemble calls the some combination of the three functions above based on that. At the end, we sum all of the parts of object_code together to get the decimal representation.  Note that the components that are unused for that operation are initialized to 0 in the constructor, and will not affect this sum. */
-int Assemble(){
-    splitInput(input);
+int Assembler::Assemble(){
+    splitInput(input,instructParts);
     getOperation(instructParts.at(0));
     if (numRegisters > 0){
+        std::cout << "We have at least one register\n" << std::endl;
         getDestRegister(instructParts.at(1));
+        std::cout << "We have retrieved the destination register value\n"<<std::endl;
         if (numRegisters == 2){
+            std::cout << "We have at two registers\n" << std::endl;
             getSrcRegister(instructParts.at(2));
         }
     }
@@ -209,3 +219,14 @@ int Assemble(){
     object_code = opcode + immediate + srcReg + destReg + addr;
     return object_code;
 }
+
+int main(int argc, char* argv[]){
+    Assembler assembler;
+    assembler.getInput();
+    int result;
+    result = assembler.Assemble();
+    std::cout << result << std::endl;
+    return 0;
+}
+
+

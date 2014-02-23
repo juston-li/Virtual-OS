@@ -6,21 +6,22 @@
 #define ____Assembler__
 
 #include <iostream>
-#include <std.bool.h>
+#include <vector>
+#include <string>
 class Assembler {
 public:
-    Assembler::Assembler();
-    Assembler::~Assember();
-    void Assembler::getInput();
-    void Assembler::splitInput(const std::string &inputString, std::vector<const std::string> &elems);
-    void Assembler::getOperation(const std::string &operationString);
-    void Assembler::getDestRegister(const std::string &registerString);
-    void Assembler::getSrcRegister(const std::string &registerString);
-    void Assembler::getAddress(const std::string &addrString);
-    int Assembler::Assemble();
+    Assembler();
+    ~Assembler();
+    void getInput();
+    void splitInput(const std::string &inputString, std::vector<std::string> &elems);
+    void getOperation(const std::string &instruct);
+    void getDestRegister(const std::string &registerString);
+    void getSrcRegister(const std::string &registerString);
+    void getAddress(const std::string &addrString);
+    int Assemble();
 private:
     // The original instruction string input to the assembler
-    std:string input;
+    std::string input;
     // A flag flipped if the instruction include an address of constant value
     int isAddr;
     // The decimal representation of the object code
@@ -38,6 +39,6 @@ private:
     // The decimal value of the constant or address
     int addr;
     // A vector to hold different parts of the input string
-    vector<const std::string> instructParts;
+    std::vector<std::string> instructParts;
 };
 #endif /* defined(____Assembler__) */
