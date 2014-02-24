@@ -19,10 +19,9 @@ int VirtualMachine::load_mem(string executable) {
 	base = 0; //base is always zero since currently only support 1 program loaded
 
 	if (program.is_open()) {
-		for(int i = 0; program >> code; i++) {
+		for(limit = base; program >> code; limit++) {
 			cout << code << '\n'; //testing
-			mem[i] = code;
-			limit = i; //set the limit register
+			mem[limit] = code;
 			if (unlikely(limit == 256)) {
 				cerr << "Memory overflow\n";  
 				return 0;
