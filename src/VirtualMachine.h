@@ -5,7 +5,7 @@ class VirtualMachine{
 	public:
 		VirtualMachine();
 		
-		void load_mem(string executable);
+		int load_mem(string executable);
 		void execute();
 		void load();
 		void store();
@@ -18,9 +18,9 @@ class VirtualMachine{
 		void compl_op();
 		void shl();
 		void shla();
+		void shr();
 		void shra();
 		void compr();
-		void compri();
 		void getstat();
 		void putstat();
 		void jump();
@@ -36,6 +36,8 @@ class VirtualMachine{
 	private:
 		vector<int> mem;
 		vector<int> r;
+		typedef void (VirtualMachine::*instruction)();
 		int pc,ir,sr,sp,clock,base,limit;
-		//int opcode, rd, immed, rs, addr ,const
+		int opcode,rd,immed,rs,addr,constant;
+		bool halt_flag;
 };

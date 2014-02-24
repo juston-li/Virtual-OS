@@ -220,13 +220,4 @@ int Assembler::Assemble(){
     return object_code;
 }
 
-int main(int argc, char* argv[]){
-    Assembler assembler;
-    assembler.getInput();
-    int result;
-    result = assembler.Assemble();
-    std::cout << result << std::endl;
-    return 0;
-}
-
 

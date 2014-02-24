@@ -1,6 +1,7 @@
 CXX = g++
 CFLAGS = -g -std=c++0x -Wall -march=native -O2
 DIRS = src tests
+.PHONY : os test
 all: os test
 
 os:
