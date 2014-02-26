@@ -1,0 +1,39 @@
+	Group members present
+		Joseph, Juston, Eric, Jack
+	Group members absent
+
+Things to talk about
+
+	Storing the various components of each instruction
+
+		Currently storing in decimal values as integers
+
+		Works for most functions, add, subtract, logical functions etc
+
+		How is this going to work with overflow? Ensuring that we're staying within the 16-bit limit
+
+		Would it make sense to instead store them as strings, so we can work with them on a bit level? Or would that makes things too complicated?
+
+	Splitting up work so we know who is doing what
+		- Jack and Juston have done a ton of stuff already, Eric and I need to actually contribute
+
+		What do we still need to do?
+			Joe 
+				Function calls, stack pointer logic and all that jazz
+				Read and write functions
+			Juston
+				Arithmetic functions
+				Rest of shift functions
+			Eric
+				Write logic to take input from file and run through assembler
+				The loops for taking in lines from the input file will go in the assembler, not in the OS
+				Write code to output object code into .o file
+				Right code to check for comments
+			Jack
+				Error handling for invalid inputs
+				Pushing fixes for negative constants
+				Dealing with constant and address ranges
+				
+			Get a test file sent through and ensure that everything is working properly
+			Test the assembler to ensure that all the object code is being written properly
+			
