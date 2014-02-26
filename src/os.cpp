@@ -5,6 +5,13 @@
 #include "VirtualMachine.h"
 using namespace std;
 
+/*
+ *	TODO
+ *		Write file to test out each individual function for expected input
+ *
+ *		Write file to test for each assembler parsing case
+ */
+
 int main(int argc,char *argv[]) {
 	int str_size;
 	string program = argv[1];
