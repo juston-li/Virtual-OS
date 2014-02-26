@@ -1,7 +1,17 @@
 //
 //  Assembler.cpp
 //  
-
+/* TODO     
+ *      Eric
+ *          Write logic to take input from file and run through assembler
+ *          The loops for taking in lines from the input file will go in the assembler, not in the OS
+ *          Write code to output object code into .o file
+ *          Right code to check for comments
+ *      Jack
+ *          Error handling for invalid inputs
+ *          Pushing fixes for negative constants
+ *          Dealing with constant and address ranges
+*/
 
 #include "Assembler.hpp"
 #include <vector>

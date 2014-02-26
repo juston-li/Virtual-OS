@@ -80,56 +80,136 @@ void VirtualMachine::execute() {
 	}
 	
 }
+
 void VirtualMachine::load() {
+	if( immed == 0 ) {
+		r[rd] = costant;
+	} else {
+		r[rd] = addr;
+	}
 }
+
 void VirtualMachine::store(){
+	mem[addr] = r[rd];
 }
+
 void VirtualMachine::add(){
+	//TODO: Juston - Add logic for function
 }
+
 void VirtualMachine::addc(){
+	//TODO: Juston - Add logic for function
 }
+
 void VirtualMachine::sub(){
+	//TODO: Juston - Add logic for function
 }
+
 void VirtualMachine::subc(){
+	//TODO: Juston - Add logic for function	
 }
+
 void VirtualMachine::and_op(){
+	if( immed == 0 ) {
+		r[rd] = r[rd] & r[rs];
+	} else {
+		r[rd] = r[rd] & consant;
+	}
 }
+
 void VirtualMachine::xor_op(){
+	if( immed == 0 ) {
+		r[rd] = r[rd] | r[rs];
+	} else {
+		r[rd] = r[rd] | constant;
+	}
 }
+
 void VirtualMachine::compl_op(){
+	r[rd] = ~r[rd]
 }
+
 void VirtualMachine::shl(){
+	r[rd] = r[rd] << 1;
 }
+
 void VirtualMachine::shla(){
+	//TODO - Joe or Juston - Add Logic
 }
+
 void VirtualMachine::shr(){
+	//TODO - Joe or Juston - Add Logic
 }
+
 void VirtualMachine::shra(){
+	//TODO - Joe or Juston - Add Logic
 }
+
 void VirtualMachine::compr(){
+	if( immed == 0 ) {
+		if( r[rd] < r[rs] ) {
+			LESS = 1 ; EQUAL = 0 ; GREATER = 0; 
+		} else if( r[rd] == r[rs] ) {
+			EQUAL = 1 ; LESS = 0 ; GREATER = 0;
+		} else if( r[rd] > r[rs] ) {
+			GREATER = 1 ; EQUAL = 0 ; LESS = 0;
+		}
+	} else { 
+		if( r[rd] < constant ) {
+			LESS = 1 ; EQUAL = 0 ; GREATER = 0;
+		}
+	}
 }
+
 void VirtualMachine::getstat(){
+	r[rd] = sr;
 }
+
 void VirtualMachine::putstat(){
+	sr = r[rd];
 }
+
 void VirtualMachine::jump(){
+	pc = addr;
 }
+
 void VirtualMachine::jumpl(){
+	if( LESS == 1 ) {
+		pc = addr;
+	}
 }
+
 void VirtualMachine::jumpe(){
+	if( EQUAL == 1 ) {
+		pc = addr;
+	}
 }
+
 void VirtualMachine::jumpg(){
+	if( GREATER == 1 ) {
+		pc = addr;
+	}
 }
+
 void VirtualMachine::call(){
+	//TODO Joe - Add Logic
 }
+
 void VirtualMachine::return_op(){
+	//TODO Joe - Add Logic
 }
+
 void VirtualMachine::read(){
+	//TODO Joe - Add Logic
 }
+
 void VirtualMachine::write(){
+	//TODO Joe - Add Logic
 }
+
 void VirtualMachine::halt(){
 	halt_flag = true;
 }
+
 void VirtualMachine::noop(){
 }
