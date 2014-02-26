@@ -6,7 +6,8 @@
 #define unlikely(x)     __builtin_expect((x),0)
 
 VirtualMachine::VirtualMachine() {
-	pc = ir = sr = sp = clock = base = limit = 0;
+	pc = ir = sr = clock = base = limit = 0;
+	sp = 256;
 	halt_flag = false;
 }
 
@@ -83,33 +84,41 @@ void VirtualMachine::execute() {
 
 void VirtualMachine::load() {
 	if( immed == 0 ) {
+		clock+=1;
 		r[rd] = costant;
 	} else {
+		clock+=4;
 		r[rd] = addr;
 	}
 }
 
 void VirtualMachine::store(){
+	clock+=1;
 	mem[addr] = r[rd];
 }
 
 void VirtualMachine::add(){
+	clock+=1;
 	//TODO: Juston - Add logic for function
 }
 
 void VirtualMachine::addc(){
+	clock+=1;
 	//TODO: Juston - Add logic for function
 }
 
 void VirtualMachine::sub(){
+	clock+=1;
 	//TODO: Juston - Add logic for function
 }
 
 void VirtualMachine::subc(){
+	clock+=1;
 	//TODO: Juston - Add logic for function	
 }
 
 void VirtualMachine::and_op(){
+	clock+=1;
 	if( immed == 0 ) {
 		r[rd] = r[rd] & r[rs];
 	} else {
@@ -118,6 +127,7 @@ void VirtualMachine::and_op(){
 }
 
 void VirtualMachine::xor_op(){
+	clock+=1;
 	if( immed == 0 ) {
 		r[rd] = r[rd] | r[rs];
 	} else {
@@ -126,90 +136,113 @@ void VirtualMachine::xor_op(){
 }
 
 void VirtualMachine::compl_op(){
+	clock+=1;
 	r[rd] = ~r[rd]
 }
 
 void VirtualMachine::shl(){
+	clock+=1;
 	r[rd] = r[rd] << 1;
 }
 
 void VirtualMachine::shla(){
+	clock+=1;
 	//TODO - Joe or Juston - Add Logic
 }
 
 void VirtualMachine::shr(){
+	clock+=1;
 	//TODO - Joe or Juston - Add Logic
 }
 
 void VirtualMachine::shra(){
+	clock+=1;
 	//TODO - Joe or Juston - Add Logic
 }
 
 void VirtualMachine::compr(){
+	clock+=1;
 	if( immed == 0 ) {
 		if( r[rd] < r[rs] ) {
-			LESS = 1 ; EQUAL = 0 ; GREATER = 0; 
+			sr = sr & 0000000000011001; 
 		} else if( r[rd] == r[rs] ) {
-			EQUAL = 1 ; LESS = 0 ; GREATER = 0;
+			sr = sr & 0000000000010101;
 		} else if( r[rd] > r[rs] ) {
-			GREATER = 1 ; EQUAL = 0 ; LESS = 0;
+			sr = sr & 0000000000010011;
 		}
 	} else { 
 		if( r[rd] < constant ) {
-			LESS = 1 ; EQUAL = 0 ; GREATER = 0;
+			sr = sr & 0000000000011001;
 		}
 	}
 }
 
 void VirtualMachine::getstat(){
+	clock+=1;
 	r[rd] = sr;
 }
 
 void VirtualMachine::putstat(){
+	clock+=1;
 	sr = r[rd];
 }
 
 void VirtualMachine::jump(){
+	clock+=1;
 	pc = addr;
 }
 
 void VirtualMachine::jumpl(){
-	if( LESS == 1 ) {
+	clock+=1;
+	if( sr & 0000000000001000 >= 1 ) {
 		pc = addr;
 	}
 }
 
 void VirtualMachine::jumpe(){
-	if( EQUAL == 1 ) {
+	clock+=1;
+	if( sr & 0000000000000100 >= 1 ) {
 		pc = addr;
 	}
 }
 
 void VirtualMachine::jumpg(){
-	if( GREATER == 1 ) {
+	clock+=1;
+	if( sr & 0000000000000010 >= 1 ) {
 		pc = addr;
 	}
 }
 
 void VirtualMachine::call(){
+	clock+=1;
 	//TODO Joe - Add Logic
 }
 
 void VirtualMachine::return_op(){
+	clock+=1;
 	//TODO Joe - Add Logic
 }
 
 void VirtualMachine::read(){
+	clock += 28;
+
 	//TODO Joe - Add Logic
 }
 
 void VirtualMachine::write(){
-	//TODO Joe - Add Logic
+	clock += 28;
+
+	std::ofstream output;
+	output.open(filename."out", std::ofstream::out | std::ofstream::app);
+	if( output.isOpen() )
+		output << r[d] << std::endl;
 }
 
 void VirtualMachine::halt(){
+	clock+=1;
 	halt_flag = true;
 }
 
 void VirtualMachine::noop(){
+	clock+=1;
 }
