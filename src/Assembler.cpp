@@ -24,10 +24,17 @@ Assembler::Assembler():opcode(0),object_code(0),immediate(0),numRegisters(0),des
 }
 Assembler::~Assembler(){
 }
-/* We'll probably want to rewrite this to something more sophisticated and workable, but this is just a stand-in for getting input to the assembler */
-void Assembler::getInput(){
-    getline(std::cin,input,'\n');
-    std::cout << input << std::endl;
+// Retrieves all instructions from assembly file and stores in assemblyInstructs vector
+void Assembler::getInput(std::string inFile){
+	std::ifstream assemblyFile;
+	std::string buff;
+	assemblyFile.open(inFile, std::ifstream::in);
+    
+    while (inFile.good()){
+    	getline(inFile, buff);
+    	assemblyInstructs.push_back(buff);
+    }
+	inFile.close();
 }
 /* Found this on StackOverflow and haven't tested it yet, but it looked like a cool way to split the input string based on using spaces as delimiters */
 void Assembler::splitInput(const std::string &inputString, std::vector<std::string> &elems) {
@@ -210,8 +217,17 @@ void Assembler::getSrcRegister(const std::string &registerString){
 void Assembler::getAddress(const std::string &addrString){
     addr = std::stoi(addrString);
 }
-/* Assemble function to use the others to generate the actual object code. Starts by splitting the input string into its components, then fins out which operation is to be performed.  This will determine the number of registers involved and whether there's an address or a constant, and Assemble calls the some combination of the three functions above based on that. At the end, we sum all of the parts of object_code together to get the decimal representation.  Note that the components that are unused for that operation are initialized to 0 in the constructor, and will not affect this sum. */
-int Assembler::Assemble(){
+// Returns name of program with the suffix changed to .o
+string Assembler::outputFile(string inputName){
+	std::string outFile;
+	
+	outFile.assign(inputName);
+	outFile.erase(outFile.size()-1);
+	outFile.append('o');
+}
+/* Assemble function to use the others to generate the actual object code. Starts by splitting the input string into its components, then find out which operation is to be performed.  This will determine the number of registers involved and whether there's an address or a constant, and Assemble calls the some combination of the three functions above based on that. At the end, we sum all of the parts of object_code together to get the decimal representation.  Note that the components that are unused for that operation are initialized to 0 in the constructor, and will not affect this sum. */
+std::string Assembler::Assemble(std::string inputProgram){
+	getInput(inputProgram);
     splitInput(input,instructParts);
     getOperation(instructParts.at(0));
     if (numRegisters > 0){
@@ -227,7 +243,6 @@ int Assembler::Assemble(){
         getAddress(instructParts.at(2));
     }
     object_code = opcode + immediate + srcReg + destReg + addr;
-    return object_code;
+    return outputFile(inputProgram);
 }
-
 

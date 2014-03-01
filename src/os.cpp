@@ -22,6 +22,7 @@ int main(int argc,char *argv[]) {
 		cerr << "Usage: " << argv[0] << " prog.s" << std::endl;
 		return 1;
 	}
+	
 	//Assemble program creates .o file
     //Assembler assembler;
     //assembler.getInput();
@@ -35,5 +36,3 @@ int main(int argc,char *argv[]) {
 		vm.execute();
 	}
 }
-
-
