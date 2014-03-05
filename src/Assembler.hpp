@@ -8,17 +8,19 @@
 #include <iostream>
 #include <vector>
 #include <string>
+#include <fstream>
 class Assembler {
 public:
     Assembler();
     ~Assembler();
-    void getInput();
+    void getInput(std::string inFile);
     void splitInput(const std::string &inputString, std::vector<std::string> &elems);
     void getOperation(const std::string &instruct);
     void getDestRegister(const std::string &registerString);
     void getSrcRegister(const std::string &registerString);
     void getAddress(const std::string &addrString);
-    int Assemble();
+    string outputFile(string inputName);
+    string Assemble(string inputProgram);
 private:
     // The decimal value of the operation code
     int opcode;
@@ -40,5 +42,9 @@ private:
     std::string input;
     // A vector to hold different parts of the input string
     std::vector<std::string> instructParts;
+    // Object code file, ending with .o
+    std::string outFile;
+    // Vector of each instruction in assembly .s file
+    std::vector<std::string> assemblyInstructs;
 };
 #endif /* defined(____Assembler__) */
