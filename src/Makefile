@@ -8,7 +8,7 @@ all: os
 	$(CXX) -c $(CXXFLAGS) $<
 
 os: $(OBJECTS) os.cpp
-	$(CXX) -o $@ os.cpp $(OBJECTS)
+	$(CXX)  $(CXXFLAGS) -o $@ os.cpp $(OBJECTS)
 
 clean: 
 	$(RM) os *.o
