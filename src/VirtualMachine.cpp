@@ -407,3 +407,35 @@ bool VirtualMachine::stackEmpty() {
 bool VirtualMachine::stackFull() {
 	return (sp <= limit);
 }
+#ifdef TESTING
+void VirtualMachine::set_reg(int reg, int value){
+	r[reg] = value;
+}
+void VirtualMachine::set_pc(int value){
+	pc = value;
+}
+void VirtualMachine::set_sr(int value){
+	sr = value;
+}
+void VirtualMachine::set_sp(int value){
+	sp = value;
+}
+void VirtualMachine::set_clock(int value){
+	clock = value;
+}
+int VirtualMachine::get_reg(int reg){
+	return r[reg];
+}
+int VirtualMachine::get_pc(){
+	return pc;
+}
+int VirtualMachine::get_sr(){
+	return sr;
+}
+int VirtualMachine::get_sp(){
+	return sp;
+}
+int VirtualMachine::get_clock(){
+	return clock;
+}
+#endif

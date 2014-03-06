@@ -1,4 +1,7 @@
+#ifndef VIRTUALMACHINE_H_
+#define VIRTUALMACHINE_H_
 #include <vector>
+#include <string>
 using namespace std;
 
 class VirtualMachine{
@@ -33,6 +36,18 @@ class VirtualMachine{
 		void write();
 		void halt();
 		void noop();
+#ifdef TESTING
+		void set_reg(int reg, int value);
+		void set_pc(int value);
+		void set_sr(int value);
+		void set_sp(int value);
+		void set_clock(int value);
+		int get_reg(int reg);
+		int get_pc();
+		int get_sr();
+		int get_sp();
+		int get_clock();
+#endif
 	private:
 		vector<int> mem;
 		vector<int> r;
@@ -56,3 +71,4 @@ class VirtualMachine{
     	bool stackFull();
     	bool stackEmpty();
 };
+#endif
