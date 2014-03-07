@@ -53,7 +53,7 @@ void VirtualMachine::execute() {
 		//pc must be within program memory bounds
 		if (unlikely(pc < base || pc > limit)) {
 			cerr << "Segmentation Fault\n"; 
-			break;
+			exit(EXIT_FAILURE);
 		}
 		//set IR to current pc, increment pc
 		ir = mem[pc];
@@ -147,17 +147,17 @@ void VirtualMachine::shl(){
 
 void VirtualMachine::shla(){
 	clock+=1;
-	//TODO - Joe or Juston - Add Logic
+	
 }
 
 void VirtualMachine::shr(){
 	clock+=1;
-	//TODO - Joe or Juston - Add Logic
+
 }
 
 void VirtualMachine::shra(){
 	clock+=1;
-	//TODO - Joe or Juston - Add Logic
+
 }
 
 void VirtualMachine::compr(){
@@ -215,18 +215,58 @@ void VirtualMachine::jumpg(){
 
 void VirtualMachine::call(){
 	clock+=1;
-	//TODO Joe - Add Logic
+	
+	if( stackFull() == false ) {
+		mem[sp] = pc;
+		sp--;
+		mem[sp] = r[0];
+		sp--;
+		mem[sp] = r[1];
+		sp--;
+		mem[sp] = r[2];
+		sp--;
+		mem[sp] = r[3];
+		sp--;
+		mem[sp] = sr;
+		sp--;
+		pc = addr;
+	} else {
+		cerr << "Segmentation Fault\n";
+		exit(EXIT_FAILURE);		
+	}
 }
 
 void VirtualMachine::return_op(){
 	clock+=1;
-	//TODO Joe - Add Logic
+	
+	if( stackEmpty() == false ) {
+		sp++;
+		sr = mem[sp];
+		sp++;
+		r[3] = mem[sp];
+		sp++;
+		r[2] = mem[sp];
+		sp++;
+		r[1] = mem[sp];
+		sp++;
+		r[0] = mem[sp];
+		sp++;
+		pc = mem[sp];
+	} else {
+		cerr << "Segmentation Fault\n";
+		exit(EXIT_FAILURE);
+	}
 }
 
 void VirtualMachine::read(){
 	clock += 28;
-
-	//TODO Joe - Add Logic
+	//Writing this with the assumption that the .in file has only one value in it to read in per program, removing the necessity for a line pointer
+	
+	std::ifstream input;
+	input.open(filename."in", std::ifstream::in);
+	if( input.good() ) {
+		r[rd] = input.get();
+	}
 }
 
 void VirtualMachine::write(){
@@ -234,8 +274,8 @@ void VirtualMachine::write(){
 
 	std::ofstream output;
 	output.open(filename."out", std::ofstream::out | std::ofstream::app);
-	if( output.isOpen() )
-		output << r[d] << std::endl;
+	if( output.good() )
+		output << r[rd] << std::endl;
 }
 
 void VirtualMachine::halt(){
@@ -245,4 +285,13 @@ void VirtualMachine::halt(){
 
 void VirtualMachine::noop(){
 	clock+=1;
+}
+
+/* Helper functions for call and return instructions */
+bool VirtualMaciine::stackEmpty() {
+	return sp >= 250;
+}
+
+bool VirtualMacine::stackFull() {
+	return sp <= limit;
 }
