@@ -142,6 +142,8 @@ void VirtualMachine::compl_op(){
 
 void VirtualMachine::shl(){
 	clock+=1;
+
+	/* Set the carry bit */	
 	if( 1000000000000000 && r[rd] > 0 ) {
 		sr = sr & 0000000000011111;
 	} else {
@@ -153,6 +155,7 @@ void VirtualMachine::shl(){
 void VirtualMachine::shla(){
 	clock+=1;
 
+	/* Set the carry bit */
 	if( 1000000000000000 && r[rd] > 0 ) {
 		sr = sr & 0000000000011111;
 	} else {
@@ -163,12 +166,34 @@ void VirtualMachine::shla(){
 
 void VirtualMachine::shr(){
 	clock+=1;
+	
+	/* Set the carry bit */
+	if( 0000000000000001 && r[rd] > 0 ) {
+		sr = sr & 0000000000011111;
+	} else {
+		sr = sr & 0000000000011110;
+	}
 
+	/* In c/c++ the right shift sign extends based on the int being signed/unsigned. Ints default to signed so we have to type case to an unsigned
+	 * to be able to easily logically right shift. The value is then cast back into a signed into the match the vector type.
+	 */
+	unsigned int regVal = (unsigned int)r[rd];
+	regVal >> 1;
+	r[rd] = (signed int)regVal;
 }
 
 void VirtualMachine::shra(){
 	clock+=1;
 
+	/* Set the carry bit */
+	if( 0000000000000001 && r[rd] > 0 ) {
+		sr = sr & 0000000000011111;
+	} else {
+		sr = sr & 0000000000011110;
+	}
+
+	/* C++ default int type is signed so sign extension happens automatically with a right shift. */
+	r[rd] = r[rd] >> 1;
 }
 
 void VirtualMachine::compr(){
