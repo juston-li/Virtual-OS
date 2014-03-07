@@ -9,6 +9,8 @@
 #include <vector>
 #include <string>
 #include <fstream>
+
+using namespace std;
 class Assembler {
 public:
     Assembler();
@@ -18,8 +20,8 @@ public:
     void getOperation(const std::string &instruct);
     void getDestRegister(const std::string &registerString);
     void getSrcRegister(const std::string &registerString);
-    void getAddress(const std::string &addrString);
-    string outputFile(string inputName);
+    void getAddressOrConstant(const std::string &addrString);
+    void outputFile(string inputName);
     string Assemble(string inputProgram);
 private:
     // The decimal value of the operation code
@@ -36,8 +38,9 @@ private:
     int srcReg;
     // The decimal value of the constant or address
     int addr;
-    // A flag flipped if the instruction include an address of constant value
+    // Flags flipped if the instruction includes an address or constant value
     int isAddr;
+    int isConst;
     // The original instruction string input to the assembler
     std::string input;
     // A vector to hold different parts of the input string
@@ -46,5 +49,10 @@ private:
     std::string outFile;
     // Vector of each instruction in assembly .s file
     std::vector<std::string> assemblyInstructs;
+    // Flags to determine whether constant, address, or registe is out of bounds or whether the instruction is valid.
+    int invalidInstruct;
+    int invalidRegister;
+    int invalidConstOrAddr;
+    int invalidNumArguments;
 };
 #endif /* defined(____Assembler__) */
