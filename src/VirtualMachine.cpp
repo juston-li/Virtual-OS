@@ -142,12 +142,23 @@ void VirtualMachine::compl_op(){
 
 void VirtualMachine::shl(){
 	clock+=1;
+	if( 1000000000000000 && r[rd] > 0 ) {
+		sr = sr & 0000000000011111;
+	} else {
+		sr = sr & 0000000000011110;
+	}
 	r[rd] = r[rd] << 1;
 }
 
 void VirtualMachine::shla(){
 	clock+=1;
-	
+
+	if( 1000000000000000 && r[rd] > 0 ) {
+		sr = sr & 0000000000011111;
+	} else {
+		sr = sr & 0000000000011110;
+	}
+	r[rd] = r[rd] << 1;
 }
 
 void VirtualMachine::shr(){
