@@ -9,11 +9,12 @@ VirtualMachine::VirtualMachine() {
 	pc = ir = sr = clock = base = limit = 0;
 	sp = 256;
 	halt_flag = false;
+	r.assign(4,0); 
+	mem.assign(260,0); //max is 256 but buffer in case
 }
 
 int VirtualMachine::load_mem(string executable) {
 	int code;
-	mem.resize(260); //max is 256 but buffer in case
 	ifstream program(executable.c_str());
 
 	/*set base register*/
