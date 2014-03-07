@@ -408,7 +408,11 @@ bool VirtualMachine::stackEmpty() {
 bool VirtualMachine::stackFull() {
 	return (sp <= limit);
 }
+
 #ifdef TESTING
+void VirtualMachine::set_mem(int address, int value){
+	mem[address] = value;
+}
 void VirtualMachine::set_reg(int reg, int value){
 	r[reg] = value;
 }
@@ -424,6 +428,27 @@ void VirtualMachine::set_sp(int value){
 void VirtualMachine::set_clock(int value){
 	clock = value;
 }
+void VirtualMachine::set_rd(int value){
+	rd = value;
+}
+void VirtualMachine::set_immed(int value){
+	immed = value;
+}
+void VirtualMachine::set_rs(int value){
+	rs = value;
+}
+void VirtualMachine::set_addr(int value){
+	addr = value;
+}
+void VirtualMachine::set_constant(int value){
+	constant = value;
+}
+void VirtualMachine::set_halt_flag(bool value){
+	halt_flag = value;
+}
+int VirtualMachine::get_mem(int address){
+	return mem[address];
+}
 int VirtualMachine::get_reg(int reg){
 	return r[reg];
 }
@@ -438,5 +463,23 @@ int VirtualMachine::get_sp(){
 }
 int VirtualMachine::get_clock(){
 	return clock;
+}
+int VirtualMachine::get_rd(){
+	return rd;
+}
+int VirtualMachine::get_immed(){
+	return immed;
+}
+int VirtualMachine::get_rs(){
+	return rs;
+}
+int VirtualMachine::get_addr(){
+	return addr;
+}
+int VirtualMachine::get_constant(){
+	return constant;
+}
+bool VirtualMachine::get_halt_flag(){
+	return halt_flag;
 }
 #endif

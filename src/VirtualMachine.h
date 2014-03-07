@@ -37,16 +37,30 @@ class VirtualMachine{
 		void halt();
 		void noop();
 #ifdef TESTING
+		void set_mem(int address, int value);
 		void set_reg(int reg, int value);
 		void set_pc(int value);
 		void set_sr(int value);
 		void set_sp(int value);
 		void set_clock(int value);
+		void set_rd(int value);
+		void set_immed(int value);
+		void set_rs(int value);
+		void set_addr(int value);
+		void set_constant(int value);
+		void set_halt_flag(bool value);
+		int get_mem(int address);
 		int get_reg(int reg);
 		int get_pc();
 		int get_sr();
 		int get_sp();
 		int get_clock();
+		int get_rd();
+		int get_immed();
+		int get_rs();
+		int get_addr();
+		int get_constant();
+		bool get_halt_flag();
 #endif
 	private:
 		vector<int> mem;
