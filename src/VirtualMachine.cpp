@@ -376,9 +376,10 @@ void VirtualMachine::read(){
 	//Writing this with the assumption that the .in file has only one value in it to read in per program, removing the necessity for a line pointer
 	
 	std::ifstream input;
+	std::cout << filename+".in";
 	input.open(filename+".in", std::ifstream::in);
 	if( input.good() ) {
-		r[rd] = input.get();
+		r[rd] = input.get() - 0;
 	}
 }
 
