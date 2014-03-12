@@ -9,11 +9,12 @@ VirtualMachine::VirtualMachine() {
 	pc = ir = sr = clock = base = limit = 0;
 	sp = 256;
 	halt_flag = false;
+	r.assign(4,0); 
+	mem.assign(260,0); //max is 256 but buffer in case
 }
 
 int VirtualMachine::load_mem(string executable) {
 	int code;
-	mem.resize(260); //max is 256 but buffer in case
 	ifstream program(executable.c_str());
 
 	/*set base register*/
@@ -407,3 +408,78 @@ bool VirtualMachine::stackEmpty() {
 bool VirtualMachine::stackFull() {
 	return (sp <= limit);
 }
+
+#ifdef TESTING
+void VirtualMachine::set_mem(int address, int value){
+	mem[address] = value;
+}
+void VirtualMachine::set_reg(int reg, int value){
+	r[reg] = value;
+}
+void VirtualMachine::set_pc(int value){
+	pc = value;
+}
+void VirtualMachine::set_sr(int value){
+	sr = value;
+}
+void VirtualMachine::set_sp(int value){
+	sp = value;
+}
+void VirtualMachine::set_clock(int value){
+	clock = value;
+}
+void VirtualMachine::set_rd(int value){
+	rd = value;
+}
+void VirtualMachine::set_immed(int value){
+	immed = value;
+}
+void VirtualMachine::set_rs(int value){
+	rs = value;
+}
+void VirtualMachine::set_addr(int value){
+	addr = value;
+}
+void VirtualMachine::set_constant(int value){
+	constant = value;
+}
+void VirtualMachine::set_halt_flag(bool value){
+	halt_flag = value;
+}
+int VirtualMachine::get_mem(int address){
+	return mem[address];
+}
+int VirtualMachine::get_reg(int reg){
+	return r[reg];
+}
+int VirtualMachine::get_pc(){
+	return pc;
+}
+int VirtualMachine::get_sr(){
+	return sr;
+}
+int VirtualMachine::get_sp(){
+	return sp;
+}
+int VirtualMachine::get_clock(){
+	return clock;
+}
+int VirtualMachine::get_rd(){
+	return rd;
+}
+int VirtualMachine::get_immed(){
+	return immed;
+}
+int VirtualMachine::get_rs(){
+	return rs;
+}
+int VirtualMachine::get_addr(){
+	return addr;
+}
+int VirtualMachine::get_constant(){
+	return constant;
+}
+bool VirtualMachine::get_halt_flag(){
+	return halt_flag;
+}
+#endif
