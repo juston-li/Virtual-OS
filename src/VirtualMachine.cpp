@@ -379,7 +379,7 @@ void VirtualMachine::read(){
 	std::ifstream input;
 	input.open(filename+".in", std::ifstream::in);
 	if( input.good() ) {
-		r[rd] = input.get();
+		r[rd] = input.get() - 0;
 	}
 }
 
