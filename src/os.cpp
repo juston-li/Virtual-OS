@@ -23,7 +23,7 @@ int main(int argc,char *argv[]) {
 		return 1;
 	}
 	
-	as.Assemble("tests/test.s");
+	as.Assemble(program);
 	str_size = program.size();
 	program.replace(str_size-1,1,"o"); //change to .o
 	if(vm.load_mem(program)) { //Returns 0 if prog not found or not enough mem
