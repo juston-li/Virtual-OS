@@ -45,7 +45,7 @@ class VirtualMachine{
 		int base;
 		int limit;
 		int opcode;
-		int rd
+		int rd;
 		int immed;
 		int rs;
 		int addr;
@@ -53,4 +53,6 @@ class VirtualMachine{
 		bool halt_flag;
 		// The name of the file being executed. Used for read and write instructions
     	std::string filename;
+    	bool stackFull();
+    	bool stackEmpty();
 };

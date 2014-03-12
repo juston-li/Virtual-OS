@@ -122,7 +122,7 @@ void VirtualMachine::and_op(){
 	if( immed == 0 ) {
 		r[rd] = r[rd] & r[rs];
 	} else {
-		r[rd] = r[rd] & consant;
+		r[rd] = r[rd] & constant;
 	}
 }
 
@@ -137,10 +137,10 @@ void VirtualMachine::xor_op(){
 
 void VirtualMachine::compl_op(){
 	clock+=1;
-	r[rd] = ~r[rd]
+	r[rd] = ~r[rd];
 }
 
-void VirtualMachine::shl(){
+void VirtualMachine::shl(){`
 	clock+=1;
 
 	/* Set the carry bit */	
@@ -178,7 +178,7 @@ void VirtualMachine::shr(){
 	 * to be able to easily logically right shift. The value is then cast back into a signed into the match the vector type.
 	 */
 	unsigned int regVal = (unsigned int)r[rd];
-	regVal >> 1;
+	regVal = regVal >> 1;
 	r[rd] = (signed int)regVal;
 }
 
@@ -230,21 +230,21 @@ void VirtualMachine::jump(){
 
 void VirtualMachine::jumpl(){
 	clock+=1;
-	if( sr & 0x00000008 >= 1 ) { //0000000000001000
+	if( (sr & 0x00000008) >= 1 ) { //0000000000001000
 		pc = addr;
 	}
 }
 
 void VirtualMachine::jumpe(){
 	clock+=1;
-	if( sr & 0x00000004 >= 1 ) { //0000000000000100
+	if( (sr & 0x00000004) >= 1 ) { //0000000000000100
 		pc = addr;
 	}
 }
 
 void VirtualMachine::jumpg(){
 	clock+=1;
-	if( sr & 0x00000002 >= 1 ) { //0000000000000010
+	if( (sr & 0x00000002) >= 1 ) { //0000000000000010
 		pc = addr;
 	}
 }
@@ -299,7 +299,7 @@ void VirtualMachine::read(){
 	//Writing this with the assumption that the .in file has only one value in it to read in per program, removing the necessity for a line pointer
 	
 	std::ifstream input;
-	input.open(filename."in", std::ifstream::in);
+	input.open(filename+".in", std::ifstream::in);
 	if( input.good() ) {
 		r[rd] = input.get();
 	}
@@ -309,7 +309,7 @@ void VirtualMachine::write(){
 	clock += 28;
 
 	std::ofstream output;
-	output.open(filename."out", std::ofstream::out | std::ofstream::app);
+	output.open(filename+".out", std::ofstream::out | std::ofstream::app);
 	if( output.good() )
 		output << r[rd] << std::endl;
 }
@@ -325,9 +325,9 @@ void VirtualMachine::noop(){
 
 /* Helper functions for call and return instructions */
 bool VirtualMaciine::stackEmpty() {
-	return sp >= 250;
+	return (sp >= 250);
 }
 
 bool VirtualMacine::stackFull() {
-	return sp <= limit;
+	return (sp <= limit);
 }
