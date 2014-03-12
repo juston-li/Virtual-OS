@@ -25,7 +25,7 @@ USER_DIR = ../src
 CPPFLAGS += -isystem $(GTEST_DIR)/include
 
 # Flags passed to the C++ compiler.
-CXXFLAGS += -g -std=c++0x -Wall -march=native -O2 -DTESTING=1
+CXXFLAGS += -g -std=c++0x -Wall -march=native -DTESTING=1
 
 # All tests produced by this Makefile.  Remember to add new tests you
 # created to the list.
