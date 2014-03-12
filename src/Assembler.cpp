@@ -19,7 +19,7 @@
 #include <sstream>
 
 /* Constructor initializes all integer values to 0 so as not to affect sum in Assemble function */
-Assembler::Assembler():opcode(0),object_code(0),immediate(0),numRegisters(0),destReg(0),srcReg(0),addr(0),isAddr(0),isConst(0),invalidConstOrAddr(0),invalidInstruct(0),invalidRegister(0),invalidNumArguments(0),input(""){
+Assembler::Assembler():opcode(0),object_code(0),immediate(0),numRegisters(0),destReg(0),srcReg(0),addr(0),isAddr(0),isConst(0),invalidConstOrAddr(0),invalidInstruct(0),invalidRegister(0),invalidNumArguments(0){
 }
 Assembler::~Assembler(){
 }
@@ -34,10 +34,14 @@ void Assembler::getInput(std::string inFile){
     while (assemblyFile.good()){
     	getline(assemblyFile, buff);
     	found = buff.find("!");
-    	if(found != std::string::npos)
-    		buff.erase(buff.begin() + found, buff.end());
-    	assemblyInstructs.push_back(buff);
-    }
+    	if(found == std::string::npos)
+    		assemblyInstructs.push_back(buff);
+
+		else if (found != std::string::npos && found != 0){
+			buff.erase(buff.begin() + found, buff.end());
+			assemblyInstructs.push_back(buff);
+		}
+	}
 	assemblyFile.close();
 }
 /* Found this on StackOverflow and haven't tested it yet, but it looked like a cool way to split the input string based on using spaces as delimiters */

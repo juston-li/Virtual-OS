@@ -41,8 +41,6 @@ private:
     // Flags flipped if the instruction includes an address or constant value
     int isAddr;
     int isConst;
-    // The original instruction string input to the assembler
-    std::string input;
     // A vector to hold different parts of the input string
     std::vector<std::string> instructParts;
     // Object code file, ending with .o
@@ -50,9 +48,9 @@ private:
     // Vector of each instruction in assembly .s file
     std::vector<std::string> assemblyInstructs;
     // Flags to determine whether constant, address, or registe is out of bounds or whether the instruction is valid.
+	int invalidConstOrAddr;
     int invalidInstruct;
     int invalidRegister;
-    int invalidConstOrAddr;
     int invalidNumArguments;
 };
 #endif /* defined(____Assembler__) */
