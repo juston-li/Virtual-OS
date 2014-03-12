@@ -192,6 +192,7 @@ void Assembler::getOperation(const std::string &instruct){
     }
     else if (instruct == "call"){
         numRegisters = 0;
+        isAddr = 1;
         opcode = 20 << 11;
     }
     else if (instruct == "return"){
@@ -295,7 +296,7 @@ std::string Assembler::Assemble(std::string inputProgram){
 	getInput(inputProgram);
 	outputFile(inputProgram);
 	objFile.open(outFile);
-	for (int i = 0; i < assemblyInstructs.size(); i++){
+	for (int i = 0; i < assemblyInstructs.size()-1; i++){
 		isAddr = 0;
 		immediate = 0;
 		addr = 0;
