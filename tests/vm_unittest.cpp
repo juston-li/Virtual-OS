@@ -338,42 +338,43 @@ TEST_F(VirtualMachineTest, shra){
 }
 TEST_F(VirtualMachineTest, compr){
 	/* compare with RS*/
-	//Test LESS
+	//Test GREATER
 	vm.set_rd(0);
 	vm.set_rs(1);
 	vm.set_reg(0,2);
 	vm.set_reg(1,1);
 	vm.compr();
-	EXPECT_EQ(0x00000008,vm.get_sr());
+	EXPECT_EQ(0x00000002,vm.get_sr());
 
 	//Test Equal
 	vm.set_reg(1,2);
 	vm.compr();
-	EXPECT_EQ(0x0000000C,vm.get_sr());
+	EXPECT_EQ(0x00000006,vm.get_sr());
 
-	//Test Greater
+	//Test Less
 	vm.set_reg(1,3);
 	vm.compr();
-	EXPECT_EQ(0x0000000F,vm.get_sr());
+	EXPECT_EQ(0x0000000E,vm.get_sr());
 
 	/*compare with immediate*/
 	vm.set_immed(1);
-	//Test LESS
+	//Test Greater
+	vm.set_sr(0);
 	vm.set_rd(0);
 	vm.set_reg(0,2);
 	vm.set_constant(1);
 	vm.compr();
-	EXPECT_EQ(0x00000008,vm.get_sr());
+	EXPECT_EQ(0x00000002,vm.get_sr());
 
 	//Test Equal
 	vm.set_constant(2);
 	vm.compr();
-	EXPECT_EQ(0x0000000C,vm.get_sr());
+	EXPECT_EQ(0x00000006,vm.get_sr());
 
-	//Test Greater
+	//Test Less
 	vm.set_constant(3);
 	vm.compr();
-	EXPECT_EQ(0x0000000F,vm.get_sr());
+	EXPECT_EQ(0x0000000E,vm.get_sr());
 }
 TEST_F(VirtualMachineTest, getstat){
 	vm.set_rd(0);
