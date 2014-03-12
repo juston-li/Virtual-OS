@@ -51,7 +51,7 @@ void VirtualMachine::execute() {
 
 	//while instruction isn't halt or error, run corresponding function for instruction in mem[pc], pc++
 	while(halt_flag != true) {
-		
+		std::cout << "sp: " << sp << std::endl; 		
 		//pc must be within program memory bounds
 		if (unlikely(pc < base || pc > limit)) {
 			cerr << "Segmentation Fault\n"; 
@@ -345,7 +345,7 @@ void VirtualMachine::call(){
 		sp--;
 		pc = addr;
 	} else {
-		cerr << "Segmentation Fault\n";
+		cerr << "Segmentation Fault[call]\n";
 		exit(EXIT_FAILURE);		
 	}
 }
@@ -367,7 +367,7 @@ void VirtualMachine::return_op(){
 		sp++;
 		pc = mem[sp];
 	} else {
-		cerr << "Segmentation Fault\n";
+		cerr << "Segmentation Fault[return]\n";
 		exit(EXIT_FAILURE);
 	}
 }
@@ -404,7 +404,7 @@ void VirtualMachine::noop(){
 
 /* Helper functions for call and return instructions */
 bool VirtualMachine::stackEmpty() {
-	return (sp >= 250);
+	return (sp > 250);
 }
 
 bool VirtualMachine::stackFull() {
