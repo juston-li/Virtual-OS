@@ -1,0 +1,27 @@
+	Group members present
+		Joseph, Juston, Eric, Jack
+	Group members absent
+
+	Things to talk about
+		What we've accomplished
+			Eric: Wrote all the file IO code for the operating system and passing between the asssembler and virtual Machine
+			Joe: Wrote the logic for various virtual macine functions
+			Jack: Wrote genera; error and overflow checking from both a programming aspect of the assembler and for when the assembler actually assembles the 
+					Given code.
+			Juston: Also wrote the logic for various virtual functions. Focused on the arithmetic funtions and dealing with the carry bit.
+
+		Plan for this week
+			- Joe needs to finish writing the read function. We're going to assume that we have only one line of input in the .in file as that's what the example 		seems to show.
+			
+			- Juston is going to finish the arithmetic functions and then either him or Joe are going to write the shift functions. Juston will also write the test-harness for all of the Virtual Machine functions, Joe will assist him.
+			
+			- Jack will write a test file to check the assembler and ensure that all byte code matches the expected output. Make a file with each command, write to an object file and make sure that all of the object code output is correct.
+
+			- Get the entire thing to compile
+	Approach for the presentation
+		We decided that if anyone feels particularly motivated or partial to having a powerpoint they can spend some time making one.
+		If not we will just go through the code that we've written and split up talking points between everyone. Focus on aspects of the
+		assembler and virtual machine, how we dealt with issues, implementations and stuff. We'll discuss that next week though.
+
+	Overall
+		We're very close to finishing the first phase of the virtual OS project. The assembler is essentially complete and the Virtual Machine only has a few more functions to be filled out. Once that's finished and we've done some testing we'll be ready to run a program through and present.

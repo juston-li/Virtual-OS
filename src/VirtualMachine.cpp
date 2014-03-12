@@ -6,7 +6,8 @@
 #define unlikely(x)     __builtin_expect((x),0)
 
 VirtualMachine::VirtualMachine() {
-	pc = ir = sr = sp = clock = base = limit = 0;
+	pc = ir = sr = clock = base = limit = 0;
+	sp = 256;
 	halt_flag = false;
 }
 
@@ -52,7 +53,7 @@ void VirtualMachine::execute() {
 		//pc must be within program memory bounds
 		if (unlikely(pc < base || pc > limit)) {
 			cerr << "Segmentation Fault\n"; 
-			break;
+			exit(EXIT_FAILURE);
 		}
 		//set IR to current pc, increment pc
 		ir = mem[pc];
@@ -83,133 +84,326 @@ void VirtualMachine::execute() {
 
 void VirtualMachine::load() {
 	if( immed == 0 ) {
-		r[rd] = costant;
-	} else {
+		clock+=1;
 		r[rd] = addr;
+	} else {
+		clock+=4;
+		r[rd] = constant;
 	}
 }
 
 void VirtualMachine::store(){
+	clock+=1;
 	mem[addr] = r[rd];
 }
 
 void VirtualMachine::add(){
-	//TODO: Juston - Add logic for function
+	if(immed == 0) {
+		r[rd] = r[rd] + r[rs];
+	} else if (immed == 1) {
+		r[rd] = r[rd] + constant;
+	}
+	//check carry flag
+	if(r[rd] & 0x00010000) {
+		sr = sr | 0x00000001;
+	}
+	//check for overflow
+	if(r[rd] >= 32767 || r[rd] <= -32768) {
+		sr = sr | 0x00000010; //set overflow bit to 1
+	} 
+	//sign extend, only care about first 16 bits
+	if(r[rd] & 0x00008000) {//leading bit is 1
+		r[rd] = r[rd] | 0xFFFF0000; //sign extend negative 
+	} else {				//leading bit is 0
+		r[rd] = r[rd] & 0x0000FFFF; //sign extend positive
+	}
 }
 
 void VirtualMachine::addc(){
-	//TODO: Juston - Add logic for function
+	if(immed == 0) {
+		r[rd] = r[rd] + r[rs];
+	} else if (immed == 1) {
+		r[rd] = r[rd] + constant;
+	}
+	//add carry
+	if(sr & 0x00000001) {
+		r[rd] = r[rd] + 0x00010000;
+	}
+	//check carry flag
+	if(r[rd] & 0x00010000) {
+		sr = sr | 0x00000001;
+	}
+	//check for overflow
+	if(r[rd] >= 32767 || r[rd] <= -32768) {
+		sr = sr | 0x00000010; //set overflow bit to 1
+	} 
+	//sign extend
+	if(r[rd] & 0x00008000) {//leading bit is 1
+		r[rd] = r[rd] | 0xFFFF0000; //sign extend negative 
+	} else {				//leading bit is 0
+		r[rd] = r[rd] & 0x0000FFFF; //sign extend positive
+	}
 }
 
 void VirtualMachine::sub(){
-	//TODO: Juston - Add logic for function
+	if(immed == 0) {
+		r[rd] = r[rd] - r[rs];
+	} else if (immed == 1) {
+		r[rd] = r[rd] - constant;
+	}
+	//check carry flag
+	if(r[rd] & 0x00010000) {
+		sr = sr | 0x00000001;
+	}
+	//check for overflow
+	if(r[rd] >= 32767 || r[rd] <= -32768) {
+		sr = sr | 0x00000010; //set overflow bit to 1
+	} 
+	//sign extend, only care about first 16 bits
+	if(r[rd] & 0x00008000) {//leading bit is 1
+		r[rd] = r[rd] | 0xFFFF0000; //sign extend negative 
+	} else {				//leading bit is 0
+		r[rd] = r[rd] & 0x0000FFFF; //sign extend positive
+	}
 }
 
 void VirtualMachine::subc(){
-	//TODO: Juston - Add logic for function	
+	if(immed == 0) {
+		r[rd] = r[rd] - r[rs];
+	} else if (immed == 1) {
+		r[rd] = r[rd] - constant;
+	}
+	//add carry
+	if(sr & 0x00000001) {
+		r[rd] = r[rd] - 0x00010000;
+	}
+	//check carry flag
+	if(r[rd] & 0x00010000) {
+		sr = sr | 0x00000001;
+	}
+	//check for overflow
+	if(r[rd] >= 32767 || r[rd] <= -32768) {
+		sr = sr | 0x00000010; //set overflow bit to 1
+	} 
+	//sign extend
+	if(r[rd] & 0x00008000) {//leading bit is 1
+		r[rd] = r[rd] | 0xFFFF0000; //sign extend negative 
+	} else {				//leading bit is 0
+		r[rd] = r[rd] & 0x0000FFFF; //sign extend positive
+	}
 }
 
 void VirtualMachine::and_op(){
+	clock+=1;
 	if( immed == 0 ) {
 		r[rd] = r[rd] & r[rs];
 	} else {
-		r[rd] = r[rd] & consant;
+		r[rd] = r[rd] & constant;
 	}
 }
 
 void VirtualMachine::xor_op(){
+	clock+=1;
 	if( immed == 0 ) {
-		r[rd] = r[rd] | r[rs];
+		r[rd] = r[rd] ^ r[rs];
 	} else {
-		r[rd] = r[rd] | constant;
+		r[rd] = r[rd] ^ constant;
 	}
 }
 
 void VirtualMachine::compl_op(){
-	r[rd] = ~r[rd]
+	clock+=1;
+	r[rd] = ~r[rd];
 }
 
 void VirtualMachine::shl(){
+	clock+=1;
+
+	/* Set the carry bit */	
+	if( /*1000000000000000*/ 0x10000000 && r[rd] > 0 ) {
+		sr = sr & 0x0000001F; //0000000000011111
+	} else {
+		sr = sr & 0x0000001E; //0000000000011110
+	}
 	r[rd] = r[rd] << 1;
 }
 
 void VirtualMachine::shla(){
-	//TODO - Joe or Juston - Add Logic
+	clock+=1;
+
+	/* Set the carry bit */
+	if( /*1000000000000000*/ 0x100000000 && r[rd] > 0 ) {
+		sr = sr & 0x0000001F; //0000000000011111
+	} else {
+		sr = sr & 0x0000001E; //0000000000011110
+	}
+	r[rd] = r[rd] << 1;
 }
 
 void VirtualMachine::shr(){
-	//TODO - Joe or Juston - Add Logic
+	clock+=1;
+	
+	/* Set the carry bit */
+	if( /*0000000000000001*/ 0x00000001 && r[rd] > 0 ) {
+		sr = sr & 0x0000001F; //0000000000011111
+	} else {
+		sr = sr & 0x0000001E; //0000000000011110
+	}
+
+	/* In c/c++ the right shift sign extends based on the int being signed/unsigned. Ints default to signed so we have to type case to an unsigned
+	 * to be able to easily logically right shift. The value is then cast back into a signed into the match the vector type.
+	 */
+	unsigned int regVal = (unsigned int)r[rd];
+	regVal = regVal >> 1;
+	r[rd] = (signed int)regVal;
 }
 
 void VirtualMachine::shra(){
-	//TODO - Joe or Juston - Add Logic
+	clock+=1;
+
+	/* Set the carry bit */
+	if( /*0000000000000001*/ 0x00000001 && r[rd] > 0 ) {
+		sr = sr & 0x0000001F; //0000000000011111
+	} else {
+		sr = sr & 0x0000001E; //0000000000011110
+	}
+
+	/* C++ default int type is signed so sign extension happens automatically with a right shift. */
+	r[rd] = r[rd] >> 1;
 }
 
 void VirtualMachine::compr(){
+	clock+=1;
 	if( immed == 0 ) {
 		if( r[rd] < r[rs] ) {
-			LESS = 1 ; EQUAL = 0 ; GREATER = 0; 
+			sr = sr & 0x00000019; //0000000000011001 
 		} else if( r[rd] == r[rs] ) {
-			EQUAL = 1 ; LESS = 0 ; GREATER = 0;
+			sr = sr & 0x00000025; //0000000000010101
 		} else if( r[rd] > r[rs] ) {
-			GREATER = 1 ; EQUAL = 0 ; LESS = 0;
+			sr = sr & 0x00000013; //0000000000010011
 		}
 	} else { 
 		if( r[rd] < constant ) {
-			LESS = 1 ; EQUAL = 0 ; GREATER = 0;
+			sr = sr & 0x00000019; //0000000000011001
 		}
 	}
 }
 
 void VirtualMachine::getstat(){
+	clock+=1;
 	r[rd] = sr;
 }
 
 void VirtualMachine::putstat(){
+	clock+=1;
 	sr = r[rd];
 }
 
 void VirtualMachine::jump(){
+	clock+=1;
 	pc = addr;
 }
 
 void VirtualMachine::jumpl(){
-	if( LESS == 1 ) {
+	clock+=1;
+	if( (sr & 0x00000008) >= 1 ) { //0000000000001000
 		pc = addr;
 	}
 }
 
 void VirtualMachine::jumpe(){
-	if( EQUAL == 1 ) {
+	clock+=1;
+	if( (sr & 0x00000004) >= 1 ) { //0000000000000100
 		pc = addr;
 	}
 }
 
 void VirtualMachine::jumpg(){
-	if( GREATER == 1 ) {
+	clock+=1;
+	if( (sr & 0x00000002) >= 1 ) { //0000000000000010
 		pc = addr;
 	}
 }
 
 void VirtualMachine::call(){
-	//TODO Joe - Add Logic
+	clock+=1;
+	
+	if( stackFull() == false ) {
+		mem[sp] = pc;
+		sp--;
+		mem[sp] = r[0];
+		sp--;
+		mem[sp] = r[1];
+		sp--;
+		mem[sp] = r[2];
+		sp--;
+		mem[sp] = r[3];
+		sp--;
+		mem[sp] = sr;
+		sp--;
+		pc = addr;
+	} else {
+		cerr << "Segmentation Fault\n";
+		exit(EXIT_FAILURE);		
+	}
 }
 
 void VirtualMachine::return_op(){
-	//TODO Joe - Add Logic
+	clock+=1;
+	
+	if( stackEmpty() == false ) {
+		sp++;
+		sr = mem[sp];
+		sp++;
+		r[3] = mem[sp];
+		sp++;
+		r[2] = mem[sp];
+		sp++;
+		r[1] = mem[sp];
+		sp++;
+		r[0] = mem[sp];
+		sp++;
+		pc = mem[sp];
+	} else {
+		cerr << "Segmentation Fault\n";
+		exit(EXIT_FAILURE);
+	}
 }
 
 void VirtualMachine::read(){
-	//TODO Joe - Add Logic
+	clock += 28;
+	//Writing this with the assumption that the .in file has only one value in it to read in per program, removing the necessity for a line pointer
+	
+	std::ifstream input;
+	input.open(filename+".in", std::ifstream::in);
+	if( input.good() ) {
+		r[rd] = input.get();
+	}
 }
 
 void VirtualMachine::write(){
-	//TODO Joe - Add Logic
+	clock += 28;
+
+	std::ofstream output;
+	output.open(filename+".out", std::ofstream::out | std::ofstream::app);
+	if( output.good() )
+		output << r[rd] << std::endl;
 }
 
 void VirtualMachine::halt(){
+	clock+=1;
 	halt_flag = true;
 }
 
 void VirtualMachine::noop(){
+	clock+=1;
+}
+
+/* Helper functions for call and return instructions */
+bool VirtualMachine::stackEmpty() {
+	return (sp >= 250);
+}
+
+bool VirtualMachine::stackFull() {
+	return (sp <= limit);
 }

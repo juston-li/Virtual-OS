@@ -37,7 +37,22 @@ class VirtualMachine{
 		vector<int> mem;
 		vector<int> r;
 		typedef void (VirtualMachine::*instruction)();
-		int pc,ir,sr,sp,clock,base,limit;
-		int opcode,rd,immed,rs,addr,constant;
+		int pc;
+		int ir;
+		int sr;
+		int sp;
+		int clock;
+		int base;
+		int limit;
+		int opcode;
+		int rd;
+		int immed;
+		int rs;
+		int addr;
+		int constant;
 		bool halt_flag;
+		// The name of the file being executed. Used for read and write instructions
+    	std::string filename;
+    	bool stackFull();
+    	bool stackEmpty();
 };
