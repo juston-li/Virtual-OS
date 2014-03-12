@@ -140,7 +140,7 @@ void VirtualMachine::compl_op(){
 	r[rd] = ~r[rd];
 }
 
-void VirtualMachine::shl(){`
+void VirtualMachine::shl(){
 	clock+=1;
 
 	/* Set the carry bit */	
@@ -324,10 +324,10 @@ void VirtualMachine::noop(){
 }
 
 /* Helper functions for call and return instructions */
-bool VirtualMaciine::stackEmpty() {
+bool VirtualMachine::stackEmpty() {
 	return (sp >= 250);
 }
 
-bool VirtualMacine::stackFull() {
+bool VirtualMachine::stackFull() {
 	return (sp <= limit);
 }
