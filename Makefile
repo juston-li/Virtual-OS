@@ -1,5 +1,5 @@
 CXX = g++
-CXXFLAGS = -g -std=c++0x -Wall -march=native -O2
+CXXFLAGS = -g -std=c++0x -Wall -march=native
 DIRS = src tests
 .PHONY : os test
 all: os test
