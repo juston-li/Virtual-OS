@@ -85,10 +85,10 @@ void VirtualMachine::execute() {
 void VirtualMachine::load() {
 	if( immed == 0 ) {
 		clock+=1;
-		r[rd] = costant;
+		r[rd] = addr;
 	} else {
 		clock+=4;
-		r[rd] = addr;
+		r[rd] = constant;
 	}
 }
 
@@ -129,9 +129,9 @@ void VirtualMachine::and_op(){
 void VirtualMachine::xor_op(){
 	clock+=1;
 	if( immed == 0 ) {
-		r[rd] = r[rd] | r[rs];
+		r[rd] = r[rd] ^ r[rs];
 	} else {
-		r[rd] = r[rd] | constant;
+		r[rd] = r[rd] ^ constant;
 	}
 }
 
@@ -144,10 +144,10 @@ void VirtualMachine::shl(){
 	clock+=1;
 
 	/* Set the carry bit */	
-	if( 1000000000000000 && r[rd] > 0 ) {
-		sr = sr & 0000000000011111;
+	if( /*1000000000000000*/ 0x1000 && r[rd] > 0 ) {
+		sr = sr & 0x001F; //0000000000011111
 	} else {
-		sr = sr & 0000000000011110;
+		sr = sr & 0x001E; //0000000000011110
 	}
 	r[rd] = r[rd] << 1;
 }
@@ -156,10 +156,10 @@ void VirtualMachine::shla(){
 	clock+=1;
 
 	/* Set the carry bit */
-	if( 1000000000000000 && r[rd] > 0 ) {
-		sr = sr & 0000000000011111;
+	if( /*1000000000000000*/ 0x1000 && r[rd] > 0 ) {
+		sr = sr & 0x001F; //0000000000011111
 	} else {
-		sr = sr & 0000000000011110;
+		sr = sr & 0x001E; //0000000000011110
 	}
 	r[rd] = r[rd] << 1;
 }
@@ -168,10 +168,10 @@ void VirtualMachine::shr(){
 	clock+=1;
 	
 	/* Set the carry bit */
-	if( 0000000000000001 && r[rd] > 0 ) {
-		sr = sr & 0000000000011111;
+	if( /*0000000000000001*/ 0x0001 && r[rd] > 0 ) {
+		sr = sr & 0x001F; //0000000000011111
 	} else {
-		sr = sr & 0000000000011110;
+		sr = sr & 0x001E; //0000000000011110
 	}
 
 	/* In c/c++ the right shift sign extends based on the int being signed/unsigned. Ints default to signed so we have to type case to an unsigned
@@ -186,10 +186,10 @@ void VirtualMachine::shra(){
 	clock+=1;
 
 	/* Set the carry bit */
-	if( 0000000000000001 && r[rd] > 0 ) {
-		sr = sr & 0000000000011111;
+	if( /*0000000000000001*/ 0x0001 && r[rd] > 0 ) {
+		sr = sr & 0x001F; //0000000000011111
 	} else {
-		sr = sr & 0000000000011110;
+		sr = sr & 0x001E; //0000000000011110
 	}
 
 	/* C++ default int type is signed so sign extension happens automatically with a right shift. */
@@ -200,15 +200,15 @@ void VirtualMachine::compr(){
 	clock+=1;
 	if( immed == 0 ) {
 		if( r[rd] < r[rs] ) {
-			sr = sr & 0000000000011001; 
+			sr = sr & 0x0019; //0000000000011001 
 		} else if( r[rd] == r[rs] ) {
-			sr = sr & 0000000000010101;
+			sr = sr & 0x0025; //0000000000010101
 		} else if( r[rd] > r[rs] ) {
-			sr = sr & 0000000000010011;
+			sr = sr & 0x0013; //0000000000010011
 		}
 	} else { 
 		if( r[rd] < constant ) {
-			sr = sr & 0000000000011001;
+			sr = sr & 0x0019; //0000000000011001
 		}
 	}
 }
@@ -230,21 +230,21 @@ void VirtualMachine::jump(){
 
 void VirtualMachine::jumpl(){
 	clock+=1;
-	if( sr & 0000000000001000 >= 1 ) {
+	if( sr & 0x0008 >= 1 ) { //0000000000001000
 		pc = addr;
 	}
 }
 
 void VirtualMachine::jumpe(){
 	clock+=1;
-	if( sr & 0000000000000100 >= 1 ) {
+	if( sr & 0x0004 >= 1 ) { //0000000000000100
 		pc = addr;
 	}
 }
 
 void VirtualMachine::jumpg(){
 	clock+=1;
-	if( sr & 0000000000000010 >= 1 ) {
+	if( sr & 0x0002 >= 1 ) { //0000000000000010
 		pc = addr;
 	}
 }
