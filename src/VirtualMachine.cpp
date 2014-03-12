@@ -98,23 +98,99 @@ void VirtualMachine::store(){
 }
 
 void VirtualMachine::add(){
-	clock+=1;
-	//TODO: Juston - Add logic for function
+	if(immed == 0) {
+		r[rd] = r[rd] + r[rs];
+	} else if (immed == 1) {
+		r[rd] = r[rd] + constant;
+	}
+	//check carry flag
+	if(r[rd] & 0x00010000) {
+		sr = sr | 0x00000001;
+	}
+	//check for overflow
+	if(r[rd] >= 32767 || r[rd] <= -32768) {
+		sr = sr | 0x00000010; //set overflow bit to 1
+	} 
+	//sign extend, only care about first 16 bits
+	if(r[rd] & 0x00008000) {//leading bit is 1
+		r[rd] = r[rd] | 0xFFFF0000; //sign extend negative 
+	} else {				//leading bit is 0
+		r[rd] = r[rd] & 0x0000FFFF; //sign extend positive
+	}
 }
 
 void VirtualMachine::addc(){
-	clock+=1;
-	//TODO: Juston - Add logic for function
+	if(immed == 0) {
+		r[rd] = r[rd] + r[rs];
+	} else if (immed == 1) {
+		r[rd] = r[rd] + constant;
+	}
+	//add carry
+	if(sr & 0x00000001) {
+		r[rd] = r[rd] + 0x00010000;
+	}
+	//check carry flag
+	if(r[rd] & 0x00010000) {
+		sr = sr | 0x00000001;
+	}
+	//check for overflow
+	if(r[rd] >= 32767 || r[rd] <= -32768) {
+		sr = sr | 0x00000010; //set overflow bit to 1
+	} 
+	//sign extend
+	if(r[rd] & 0x00008000) {//leading bit is 1
+		r[rd] = r[rd] | 0xFFFF0000; //sign extend negative 
+	} else {				//leading bit is 0
+		r[rd] = r[rd] & 0x0000FFFF; //sign extend positive
+	}
 }
 
 void VirtualMachine::sub(){
-	clock+=1;
-	//TODO: Juston - Add logic for function
+	if(immed == 0) {
+		r[rd] = r[rd] - r[rs];
+	} else if (immed == 1) {
+		r[rd] = r[rd] - constant;
+	}
+	//check carry flag
+	if(r[rd] & 0x00010000) {
+		sr = sr | 0x00000001;
+	}
+	//check for overflow
+	if(r[rd] >= 32767 || r[rd] <= -32768) {
+		sr = sr | 0x00000010; //set overflow bit to 1
+	} 
+	//sign extend, only care about first 16 bits
+	if(r[rd] & 0x00008000) {//leading bit is 1
+		r[rd] = r[rd] | 0xFFFF0000; //sign extend negative 
+	} else {				//leading bit is 0
+		r[rd] = r[rd] & 0x0000FFFF; //sign extend positive
+	}
 }
 
 void VirtualMachine::subc(){
-	clock+=1;
-	//TODO: Juston - Add logic for function	
+	if(immed == 0) {
+		r[rd] = r[rd] - r[rs];
+	} else if (immed == 1) {
+		r[rd] = r[rd] - constant;
+	}
+	//add carry
+	if(sr & 0x00000001) {
+		r[rd] = r[rd] - 0x00010000;
+	}
+	//check carry flag
+	if(r[rd] & 0x00010000) {
+		sr = sr | 0x00000001;
+	}
+	//check for overflow
+	if(r[rd] >= 32767 || r[rd] <= -32768) {
+		sr = sr | 0x00000010; //set overflow bit to 1
+	} 
+	//sign extend
+	if(r[rd] & 0x00008000) {//leading bit is 1
+		r[rd] = r[rd] | 0xFFFF0000; //sign extend negative 
+	} else {				//leading bit is 0
+		r[rd] = r[rd] & 0x0000FFFF; //sign extend positive
+	}
 }
 
 void VirtualMachine::and_op(){
