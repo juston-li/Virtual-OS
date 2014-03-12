@@ -51,7 +51,6 @@ void VirtualMachine::execute() {
 
 	//while instruction isn't halt or error, run corresponding function for instruction in mem[pc], pc++
 	while(halt_flag != true) {
-		std::cout << "sp: " << sp << std::endl; 		
 		//pc must be within program memory bounds
 		if (unlikely(pc < base || pc > limit)) {
 			cerr << "Segmentation Fault\n"; 
