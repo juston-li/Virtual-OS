@@ -86,7 +86,7 @@ void VirtualMachine::execute() {
 void VirtualMachine::load() {
 	if( immed == 0 ) {
 		clock+=1;
-		r[rd] = addr;
+		r[rd] = mem[addr];
 	} else {
 		clock+=4;
 		r[rd] = constant;
@@ -277,15 +277,19 @@ void VirtualMachine::compr(){
 	clock+=1;
 	if( immed == 0 ) {
 		if( r[rd] < r[rs] ) {
-			sr = sr & 0x00000019; //0000000000011001 
+			sr = sr | 0x00000008; //1000
 		} else if( r[rd] == r[rs] ) {
-			sr = sr & 0x00000025; //0000000000010101
+			sr = sr | 0x00000004; //0100
 		} else if( r[rd] > r[rs] ) {
-			sr = sr & 0x00000013; //0000000000010011
+			sr = sr | 0x00000002; //0010
 		}
 	} else { 
 		if( r[rd] < constant ) {
-			sr = sr & 0x00000019; //0000000000011001
+			sr = sr | 0x00000008; //1000
+		} else if( r[rd] == constant ) {
+			sr = sr | 0x00000004; //0100
+		} else if( r[rd] > constant  ) {
+			sr = sr | 0x00000002; //0010
 		}
 	}
 }
