@@ -282,7 +282,7 @@ void Assembler::getAddressOrConstant(const std::string &addrString){
 void Assembler::outputFile(string inputName){
 	outFile.assign(inputName);
 	outFile.erase(outFile.size()-1);
-	outFile.append("txt");
+	outFile.append("o");
 }
 /* Assemble function to use the others to generate the actual object code. Starts by splitting the input string into its components, then find out which operation is to be performed.  This will determine the number of registers involved and whether there's an address or a constant, and Assemble calls the some combination of the three functions above based on that. At the end, we sum all of the parts of object_code together to get the decimal representation.  Note that the components that are unused for that operation are initialized to 0 in the constructor, and will not affect this sum. */
 std::string Assembler::Assemble(std::string inputProgram){
@@ -292,13 +292,20 @@ std::string Assembler::Assemble(std::string inputProgram){
 	outputFile(inputProgram);
 	objFile.open(outFile);
 	for (int i = 0; i < assemblyInstructs.size(); i++){
+		isAddr = 0;
+		immediate = 0;
+		addr = 0;
+		destReg = 0;
+		srcReg = 0;
 		splitInput(assemblyInstructs[i], instructParts);
         if (invalidNumArguments == 1){
             object_code = -1;
+			invalidNumArguments = 0;
         }
         getOperation(instructParts.at(0));
         if (invalidInstruct == 1){
             object_code = -1;
+			invalidInstruct = 0;
         }
         if (numRegisters > 0){
             getDestRegister(instructParts.at(1));
@@ -308,6 +315,7 @@ std::string Assembler::Assemble(std::string inputProgram){
         }
         if (invalidRegister == 1){
             object_code = -1;
+			invalidRegister = 0;
         }
         if ((isAddr == 1)||(isConst==1)){
             if (numRegisters == 1){
@@ -316,6 +324,8 @@ std::string Assembler::Assemble(std::string inputProgram){
             else {
                 getAddressOrConstant(instructParts.at(1));
             }
+			isAddr = 0;
+			isConst = 0;
         }
         if (invalidConstOrAddr==1){
             object_code = -1;
