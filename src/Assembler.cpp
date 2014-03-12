@@ -19,7 +19,7 @@
 #include <sstream>
 
 /* Constructor initializes all integer values to 0 so as not to affect sum in Assemble function */
-Assembler::Assembler():opcode(0),object_code(0),immediate(0),numRegisters(0),destReg(0),srcReg(0),addr(0),isAddr(0),isConst(0),invalidConstOrAddr(0),invalidInstruct(0),invalidRegister(0),invalidNumArguments(0),input(""){
+Assembler::Assembler():opcode(0),object_code(0),immediate(0),numRegisters(0),destReg(0),srcReg(0),addr(0),isAddr(0),isConst(0),invalidConstOrAddr(0),invalidInstruct(0),invalidRegister(0),invalidNumArguments(0){
 }
 Assembler::~Assembler(){
 }
