@@ -15,6 +15,7 @@ VirtualMachine::VirtualMachine() {
 
 int VirtualMachine::load_mem(string executable) {
 	int code;
+	this->filename = executable;
 	ifstream program(executable.c_str());
 
 	/*set base register*/
