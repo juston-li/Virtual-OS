@@ -107,6 +107,8 @@ void VirtualMachine::add(){
 	//check carry flag
 	if(r[rd] & 0x00010000) {
 		sr = sr | 0x00000001;
+	} else {
+		sr = sr & 0x0000001E;
 	}
 	//check for overflow
 	if(r[rd] >= 32767 || r[rd] <= -32768) {
@@ -126,9 +128,11 @@ void VirtualMachine::addc(){
 	} else if (immed == 1) {
 		r[rd] = r[rd] + constant;
 	}
-	//add carry
-	if(sr & 0x00000001) {
-		r[rd] = r[rd] + 0x00010000;
+	//check carry flag
+	if(r[rd] & 0x00010000) {
+		sr = sr | 0x00000001;
+	} else {
+		sr = sr & 0x0000001E;
 	}
 	//check carry flag
 	if(r[rd] & 0x00010000) {
@@ -155,6 +159,8 @@ void VirtualMachine::sub(){
 	//check carry flag
 	if(r[rd] & 0x00010000) {
 		sr = sr | 0x00000001;
+	} else {
+		sr = sr & 0x0000001E;
 	}
 	//check for overflow
 	if(r[rd] >= 32767 || r[rd] <= -32768) {
@@ -176,11 +182,13 @@ void VirtualMachine::subc(){
 	}
 	//add carry
 	if(sr & 0x00000001) {
-		r[rd] = r[rd] - 0x00010000;
+		r[rd] = r[rd] - 32768;
 	}
 	//check carry flag
 	if(r[rd] & 0x00010000) {
 		sr = sr | 0x00000001;
+	} else {
+		sr = sr & 0x0000001E;
 	}
 	//check for overflow
 	if(r[rd] >= 32767 || r[rd] <= -32768) {
