@@ -86,7 +86,7 @@ void VirtualMachine::execute() {
 void VirtualMachine::load() {
 	if( immed == 0 ) {
 		clock+=1;
-		r[rd] = addr;
+		r[rd] = mem[addr];
 	} else {
 		clock+=4;
 		r[rd] = constant;
@@ -107,6 +107,8 @@ void VirtualMachine::add(){
 	//check carry flag
 	if(r[rd] & 0x00010000) {
 		sr = sr | 0x00000001;
+	} else {
+		sr = sr & 0x0000001E;
 	}
 	//check for overflow
 	if(r[rd] >= 32767 || r[rd] <= -32768) {
@@ -126,9 +128,11 @@ void VirtualMachine::addc(){
 	} else if (immed == 1) {
 		r[rd] = r[rd] + constant;
 	}
-	//add carry
-	if(sr & 0x00000001) {
-		r[rd] = r[rd] + 0x00010000;
+	//check carry flag
+	if(r[rd] & 0x00010000) {
+		sr = sr | 0x00000001;
+	} else {
+		sr = sr & 0x0000001E;
 	}
 	//check carry flag
 	if(r[rd] & 0x00010000) {
@@ -155,6 +159,8 @@ void VirtualMachine::sub(){
 	//check carry flag
 	if(r[rd] & 0x00010000) {
 		sr = sr | 0x00000001;
+	} else {
+		sr = sr & 0x0000001E;
 	}
 	//check for overflow
 	if(r[rd] >= 32767 || r[rd] <= -32768) {
@@ -176,11 +182,13 @@ void VirtualMachine::subc(){
 	}
 	//add carry
 	if(sr & 0x00000001) {
-		r[rd] = r[rd] - 0x00010000;
+		r[rd] = r[rd] - 32768;
 	}
 	//check carry flag
 	if(r[rd] & 0x00010000) {
 		sr = sr | 0x00000001;
+	} else {
+		sr = sr & 0x0000001E;
 	}
 	//check for overflow
 	if(r[rd] >= 32767 || r[rd] <= -32768) {
@@ -221,8 +229,8 @@ void VirtualMachine::shl(){
 	clock+=1;
 
 	/* Set the carry bit */	
-	if( /*1000000000000000*/ 0x10000000 && r[rd] > 0 ) {
-		sr = sr & 0x0000001F; //0000000000011111
+	if( /*1000000000000000*/ (0x00008000 & r[rd]) ) {
+		sr = sr | 0x00000001; //0000000000011111
 	} else {
 		sr = sr & 0x0000001E; //0000000000011110
 	}
@@ -233,8 +241,8 @@ void VirtualMachine::shla(){
 	clock+=1;
 
 	/* Set the carry bit */
-	if( /*1000000000000000*/ 0x100000000 && r[rd] > 0 ) {
-		sr = sr & 0x0000001F; //0000000000011111
+	if( /*1000000000000000*/ 0x00008000 & r[rd]) {
+		sr = sr | 0x00000001; //0000000000011111
 	} else {
 		sr = sr & 0x0000001E; //0000000000011110
 	}
@@ -245,8 +253,8 @@ void VirtualMachine::shr(){
 	clock+=1;
 	
 	/* Set the carry bit */
-	if( /*0000000000000001*/ 0x00000001 && r[rd] > 0 ) {
-		sr = sr & 0x0000001F; //0000000000011111
+	if( /*0000000000000001*/ 0x00000001 & r[rd]) {
+		sr = sr | 0x00000001; //0000000000011111
 	} else {
 		sr = sr & 0x0000001E; //0000000000011110
 	}
@@ -263,8 +271,8 @@ void VirtualMachine::shra(){
 	clock+=1;
 
 	/* Set the carry bit */
-	if( /*0000000000000001*/ 0x00000001 && r[rd] > 0 ) {
-		sr = sr & 0x0000001F; //0000000000011111
+	if( /*0000000000000001*/ 0x00000001 & r[rd]) {
+		sr = sr | 0x00000001; //0000000000011111
 	} else {
 		sr = sr & 0x0000001E; //0000000000011110
 	}
@@ -277,15 +285,25 @@ void VirtualMachine::compr(){
 	clock+=1;
 	if( immed == 0 ) {
 		if( r[rd] < r[rs] ) {
-			sr = sr & 0x00000019; //0000000000011001 
+			sr = sr | 0x00000008; //01000
+			sr = sr & 0x00000019; //11001
 		} else if( r[rd] == r[rs] ) {
-			sr = sr & 0x00000025; //0000000000010101
+			sr = sr | 0x00000004; //00100
+			sr = sr & 0x00000015; //10101
 		} else if( r[rd] > r[rs] ) {
-			sr = sr & 0x00000013; //0000000000010011
+			sr = sr | 0x00000002; //00010
+			sr = sr & 0x00000013; //10011
 		}
 	} else { 
 		if( r[rd] < constant ) {
-			sr = sr & 0x00000019; //0000000000011001
+			sr = sr | 0x00000008; //01000
+			sr = sr & 0x00000019; //11001
+		} else if( r[rd] == constant ) {
+			sr = sr | 0x00000004; //00100
+			sr = sr & 0x00000015; //10101
+		} else if( r[rd] > constant  ) {
+			sr = sr | 0x00000002; //00010
+			sr = sr & 0x00000013; //10011
 		}
 	}
 }

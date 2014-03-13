@@ -13,5 +13,5 @@ test:
 	cp tests/vm_unittest ./ 
 
 clean: 
-	$(RM) os vm_unittest
+	$(RM) os vm_unittest *.o
 	-for d in $(DIRS); do (cd $$d; $(MAKE) clean ); done
