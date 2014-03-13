@@ -15,7 +15,7 @@ VirtualMachine::VirtualMachine() {
 
 int VirtualMachine::load_mem(string executable) {
 	int code;
-	this->filename = executable;
+	this->filename = executable.substr(0, executable.size()-2); 
 	ifstream program(executable.c_str());
 
 	/*set base register*/
@@ -379,7 +379,7 @@ void VirtualMachine::read(){
 	std::cout << filename+".in";
 	input.open(filename+".in", std::ifstream::in);
 	if( input.good() ) {
-		r[rd] = input.get() - 0;
+		r[rd] = input.get() - '0';
 	}
 }
 
