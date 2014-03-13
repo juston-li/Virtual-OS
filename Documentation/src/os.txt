@@ -1,0 +1,11 @@
+os.cpp
+
+Contains the main function that calls the Assember and Virtual Machine.
+
+Takes 1 command-line argument as the filename of the program in assembly language 
+to run. Then passes the filename to the assembler. After the assembler outputs a 
+*.o file contain object code as decimal values of instructions, the load_mem() 
+function is called to load the contents of the object file into a vector as our 
+main memory. Lastly execute() is called and the Virtual Machine begins running 
+the object code.
+
