@@ -494,12 +494,12 @@ TEST_F(VirtualMachineTest, compr){
 	//Test Equal
 	vm.set_reg(1,2);
 	vm.compr();
-	EXPECT_EQ(0x00000006,vm.get_sr());
+	EXPECT_EQ(0x00000004,vm.get_sr());
 
 	//Test Less
 	vm.set_reg(1,3);
 	vm.compr();
-	EXPECT_EQ(0x0000000E,vm.get_sr());
+	EXPECT_EQ(0x00000008,vm.get_sr());
 
 	/*compare with immediate*/
 	vm.set_immed(1);
@@ -514,12 +514,12 @@ TEST_F(VirtualMachineTest, compr){
 	//Test Equal
 	vm.set_constant(2);
 	vm.compr();
-	EXPECT_EQ(0x00000006,vm.get_sr());
+	EXPECT_EQ(0x00000004,vm.get_sr());
 
 	//Test Less
 	vm.set_constant(3);
 	vm.compr();
-	EXPECT_EQ(0x0000000E,vm.get_sr());
+	EXPECT_EQ(0x00000008,vm.get_sr());
 }
 TEST_F(VirtualMachineTest, getstat){
 	vm.set_rd(0);
