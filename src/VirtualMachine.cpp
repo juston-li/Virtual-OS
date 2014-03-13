@@ -23,7 +23,7 @@ int VirtualMachine::load_mem(string executable) {
 
 	if (program.is_open()) {
 		for(limit = base; program >> code; limit++) {
-			cout << code << '\n'; //testing
+			//cout << code << '\n'; //testing
 			mem[limit] = code;
 			if (unlikely(limit == 256)) {
 				cerr << "Memory overflow\n";  
@@ -75,7 +75,7 @@ void VirtualMachine::execute() {
 			constant *= -1;
 		}
 		//testing
-		cout << opcode << ":" << rd << ":" << immed << ":" << rs << ":" << addr << ":" << constant << "\n";
+		//cout << opcode << ":" << rd << ":" << immed << ":" << rs << ":" << addr << ":" << constant << "\n";
 
 		//function call
 		((*this).*instruct[opcode])();
@@ -394,7 +394,7 @@ void VirtualMachine::read(){
 	//Writing this with the assumption that the .in file has only one value in it to read in per program, removing the necessity for a line pointer
 	
 	std::ifstream input;
-	std::cout << filename+".in";
+	//std::cout << filename+".in";
 	input.open(filename+".in", std::ifstream::in);
 	if( input.good() ) {
 		r[rd] = input.get() - '0';
@@ -407,11 +407,15 @@ void VirtualMachine::write(){
 	std::ofstream output;
 	output.open(filename+".out", std::ofstream::out | std::ofstream::app);
 	if( output.good() )
-		output << r[rd] << std::endl;
+		output << "Output: " << r[rd] << std::endl;
 }
 
 void VirtualMachine::halt(){
 	clock+=1;
+	std::ofstream output;
+	output.open(filename+".out", std::ofstream::out | std::ofstream::app);
+	if( output.good() )
+		output << "Clock: " << clock << std::endl;
 	halt_flag = true;
 }
 
