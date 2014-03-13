@@ -1,3 +1,14 @@
 'make os' to compile virtual os executables
 'make test' to compile test executables
 'make' for both
+
+'./os yourprogram.s' to assemble and execute
+
+Sample programs, test.s and fact.s are inside the tests folder
+The VM takes inputs via *.in files and outputs *.out files where
+* is the filename of your program *.s
+
+'./vm_unittest' to run unit testing on vm functions
+
+
+Project information at https://code.google.com/p/virtualoskameltsuruga/wiki/PHASE_I

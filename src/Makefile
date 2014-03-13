@@ -1,5 +1,5 @@
 CXX = g++
-CXXFLAGS = -g -std=c++0x -Wall -march=native -O2 -Wno-sign-compare
+CXXFLAGS = -g -std=c++0x -Wall -march=native -Wno-sign-compare
 OBJECTS = Assembler.o VirtualMachine.o
 
 all: os
@@ -8,7 +8,7 @@ all: os
 	$(CXX) -c $(CXXFLAGS) $<
 
 os: $(OBJECTS) os.cpp
-	$(CXX) -o $@ os.cpp $(OBJECTS)
+	$(CXX)  $(CXXFLAGS) -o $@ os.cpp $(OBJECTS)
 
 clean: 
 	$(RM) os *.o

@@ -9,11 +9,13 @@ VirtualMachine::VirtualMachine() {
 	pc = ir = sr = clock = base = limit = 0;
 	sp = 256;
 	halt_flag = false;
+	r.assign(4,0); 
+	mem.assign(260,0); //max is 256 but buffer in case
 }
 
 int VirtualMachine::load_mem(string executable) {
 	int code;
-	mem.resize(260); //max is 256 but buffer in case
+	this->filename = executable.substr(0, executable.size()-2); 
 	ifstream program(executable.c_str());
 
 	/*set base register*/
@@ -21,7 +23,7 @@ int VirtualMachine::load_mem(string executable) {
 
 	if (program.is_open()) {
 		for(limit = base; program >> code; limit++) {
-			cout << code << '\n'; //testing
+			//cout << code << '\n'; //testing
 			mem[limit] = code;
 			if (unlikely(limit == 256)) {
 				cerr << "Memory overflow\n";  
@@ -49,7 +51,6 @@ void VirtualMachine::execute() {
 
 	//while instruction isn't halt or error, run corresponding function for instruction in mem[pc], pc++
 	while(halt_flag != true) {
-		
 		//pc must be within program memory bounds
 		if (unlikely(pc < base || pc > limit)) {
 			cerr << "Segmentation Fault\n"; 
@@ -74,7 +75,7 @@ void VirtualMachine::execute() {
 			constant *= -1;
 		}
 		//testing
-		cout << opcode << ":" << rd << ":" << immed << ":" << rs << ":" << addr << ":" << constant << "\n";
+		//cout << opcode << ":" << rd << ":" << immed << ":" << rs << ":" << addr << ":" << constant << "\n";
 
 		//function call
 		((*this).*instruct[opcode])();
@@ -85,7 +86,7 @@ void VirtualMachine::execute() {
 void VirtualMachine::load() {
 	if( immed == 0 ) {
 		clock+=1;
-		r[rd] = addr;
+		r[rd] = mem[addr];
 	} else {
 		clock+=4;
 		r[rd] = constant;
@@ -106,6 +107,8 @@ void VirtualMachine::add(){
 	//check carry flag
 	if(r[rd] & 0x00010000) {
 		sr = sr | 0x00000001;
+	} else {
+		sr = sr & 0x0000001E;
 	}
 	//check for overflow
 	if(r[rd] >= 32767 || r[rd] <= -32768) {
@@ -125,9 +128,11 @@ void VirtualMachine::addc(){
 	} else if (immed == 1) {
 		r[rd] = r[rd] + constant;
 	}
-	//add carry
-	if(sr & 0x00000001) {
-		r[rd] = r[rd] + 0x00010000;
+	//check carry flag
+	if(r[rd] & 0x00010000) {
+		sr = sr | 0x00000001;
+	} else {
+		sr = sr & 0x0000001E;
 	}
 	//check carry flag
 	if(r[rd] & 0x00010000) {
@@ -154,6 +159,8 @@ void VirtualMachine::sub(){
 	//check carry flag
 	if(r[rd] & 0x00010000) {
 		sr = sr | 0x00000001;
+	} else {
+		sr = sr & 0x0000001E;
 	}
 	//check for overflow
 	if(r[rd] >= 32767 || r[rd] <= -32768) {
@@ -175,11 +182,13 @@ void VirtualMachine::subc(){
 	}
 	//add carry
 	if(sr & 0x00000001) {
-		r[rd] = r[rd] - 0x00010000;
+		r[rd] = r[rd] - 32768;
 	}
 	//check carry flag
 	if(r[rd] & 0x00010000) {
 		sr = sr | 0x00000001;
+	} else {
+		sr = sr & 0x0000001E;
 	}
 	//check for overflow
 	if(r[rd] >= 32767 || r[rd] <= -32768) {
@@ -220,8 +229,8 @@ void VirtualMachine::shl(){
 	clock+=1;
 
 	/* Set the carry bit */	
-	if( /*1000000000000000*/ 0x10000000 && r[rd] > 0 ) {
-		sr = sr & 0x0000001F; //0000000000011111
+	if( /*1000000000000000*/ (0x00008000 & r[rd]) ) {
+		sr = sr | 0x00000001; //0000000000011111
 	} else {
 		sr = sr & 0x0000001E; //0000000000011110
 	}
@@ -232,8 +241,8 @@ void VirtualMachine::shla(){
 	clock+=1;
 
 	/* Set the carry bit */
-	if( /*1000000000000000*/ 0x100000000 && r[rd] > 0 ) {
-		sr = sr & 0x0000001F; //0000000000011111
+	if( /*1000000000000000*/ 0x00008000 & r[rd]) {
+		sr = sr | 0x00000001; //0000000000011111
 	} else {
 		sr = sr & 0x0000001E; //0000000000011110
 	}
@@ -244,8 +253,8 @@ void VirtualMachine::shr(){
 	clock+=1;
 	
 	/* Set the carry bit */
-	if( /*0000000000000001*/ 0x00000001 && r[rd] > 0 ) {
-		sr = sr & 0x0000001F; //0000000000011111
+	if( /*0000000000000001*/ 0x00000001 & r[rd]) {
+		sr = sr | 0x00000001; //0000000000011111
 	} else {
 		sr = sr & 0x0000001E; //0000000000011110
 	}
@@ -262,8 +271,8 @@ void VirtualMachine::shra(){
 	clock+=1;
 
 	/* Set the carry bit */
-	if( /*0000000000000001*/ 0x00000001 && r[rd] > 0 ) {
-		sr = sr & 0x0000001F; //0000000000011111
+	if( /*0000000000000001*/ 0x00000001 & r[rd]) {
+		sr = sr | 0x00000001; //0000000000011111
 	} else {
 		sr = sr & 0x0000001E; //0000000000011110
 	}
@@ -276,15 +285,25 @@ void VirtualMachine::compr(){
 	clock+=1;
 	if( immed == 0 ) {
 		if( r[rd] < r[rs] ) {
-			sr = sr & 0x00000019; //0000000000011001 
+			sr = sr | 0x00000008; //01000
+			sr = sr & 0x00000019; //11001
 		} else if( r[rd] == r[rs] ) {
-			sr = sr & 0x00000025; //0000000000010101
+			sr = sr | 0x00000004; //00100
+			sr = sr & 0x00000015; //10101
 		} else if( r[rd] > r[rs] ) {
-			sr = sr & 0x00000013; //0000000000010011
+			sr = sr | 0x00000002; //00010
+			sr = sr & 0x00000013; //10011
 		}
 	} else { 
 		if( r[rd] < constant ) {
-			sr = sr & 0x00000019; //0000000000011001
+			sr = sr | 0x00000008; //01000
+			sr = sr & 0x00000019; //11001
+		} else if( r[rd] == constant ) {
+			sr = sr | 0x00000004; //00100
+			sr = sr & 0x00000015; //10101
+		} else if( r[rd] > constant  ) {
+			sr = sr | 0x00000002; //00010
+			sr = sr & 0x00000013; //10011
 		}
 	}
 }
@@ -343,7 +362,7 @@ void VirtualMachine::call(){
 		sp--;
 		pc = addr;
 	} else {
-		cerr << "Segmentation Fault\n";
+		cerr << "Segmentation Fault[call]\n";
 		exit(EXIT_FAILURE);		
 	}
 }
@@ -365,7 +384,7 @@ void VirtualMachine::return_op(){
 		sp++;
 		pc = mem[sp];
 	} else {
-		cerr << "Segmentation Fault\n";
+		cerr << "Segmentation Fault[return]\n";
 		exit(EXIT_FAILURE);
 	}
 }
@@ -375,9 +394,10 @@ void VirtualMachine::read(){
 	//Writing this with the assumption that the .in file has only one value in it to read in per program, removing the necessity for a line pointer
 	
 	std::ifstream input;
+	//std::cout << filename+".in";
 	input.open(filename+".in", std::ifstream::in);
 	if( input.good() ) {
-		r[rd] = input.get();
+		r[rd] = input.get() - '0';
 	}
 }
 
@@ -387,11 +407,15 @@ void VirtualMachine::write(){
 	std::ofstream output;
 	output.open(filename+".out", std::ofstream::out | std::ofstream::app);
 	if( output.good() )
-		output << r[rd] << std::endl;
+		output << "Output: " << r[rd] << std::endl;
 }
 
 void VirtualMachine::halt(){
 	clock+=1;
+	std::ofstream output;
+	output.open(filename+".out", std::ofstream::out | std::ofstream::app);
+	if( output.good() )
+		output << "Clock: " << clock << std::endl;
 	halt_flag = true;
 }
 
@@ -401,9 +425,84 @@ void VirtualMachine::noop(){
 
 /* Helper functions for call and return instructions */
 bool VirtualMachine::stackEmpty() {
-	return (sp >= 250);
+	return (sp > 250);
 }
 
 bool VirtualMachine::stackFull() {
 	return (sp <= limit);
 }
+
+#ifdef TESTING
+void VirtualMachine::set_mem(int address, int value){
+	mem[address] = value;
+}
+void VirtualMachine::set_reg(int reg, int value){
+	r[reg] = value;
+}
+void VirtualMachine::set_pc(int value){
+	pc = value;
+}
+void VirtualMachine::set_sr(int value){
+	sr = value;
+}
+void VirtualMachine::set_sp(int value){
+	sp = value;
+}
+void VirtualMachine::set_clock(int value){
+	clock = value;
+}
+void VirtualMachine::set_rd(int value){
+	rd = value;
+}
+void VirtualMachine::set_immed(int value){
+	immed = value;
+}
+void VirtualMachine::set_rs(int value){
+	rs = value;
+}
+void VirtualMachine::set_addr(int value){
+	addr = value;
+}
+void VirtualMachine::set_constant(int value){
+	constant = value;
+}
+void VirtualMachine::set_halt_flag(bool value){
+	halt_flag = value;
+}
+int VirtualMachine::get_mem(int address){
+	return mem[address];
+}
+int VirtualMachine::get_reg(int reg){
+	return r[reg];
+}
+int VirtualMachine::get_pc(){
+	return pc;
+}
+int VirtualMachine::get_sr(){
+	return sr;
+}
+int VirtualMachine::get_sp(){
+	return sp;
+}
+int VirtualMachine::get_clock(){
+	return clock;
+}
+int VirtualMachine::get_rd(){
+	return rd;
+}
+int VirtualMachine::get_immed(){
+	return immed;
+}
+int VirtualMachine::get_rs(){
+	return rs;
+}
+int VirtualMachine::get_addr(){
+	return addr;
+}
+int VirtualMachine::get_constant(){
+	return constant;
+}
+bool VirtualMachine::get_halt_flag(){
+	return halt_flag;
+}
+#endif

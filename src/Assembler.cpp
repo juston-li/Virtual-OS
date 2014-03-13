@@ -50,7 +50,7 @@ void Assembler::splitInput(const std::string &inputString, std::vector<std::stri
     std::string buf;
     while (ss>>buf) {
         elems.push_back(buf);
-        std::cout<<buf<<std::endl;
+       // std::cout<<buf<<std::endl;
     }
     while (ss>>buf) {
         elems.push_back(buf);

@@ -1,0 +1,7 @@
+vm_unittest.cpp
+
+Uses Google test framework to test the function operations for the VM.
+
+Test cases are messy and need to be cleaned up. Currently they try to cover
+some basic cases and known edge cases. They aren't guranteed to provide full
+coverage or to be completely correct.

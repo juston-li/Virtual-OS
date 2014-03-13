@@ -1,4 +1,4 @@
 *~
 *.o
 os
-test
+vm_unittest

@@ -1,0 +1,30 @@
+VirtualMachine.cpp
+
+Virtual Machine responsible for running object code.
+
+The layout of the VM starts with the most of the registers being normal int variables.
+The exceptions are the 4 general purpose registers and the main memory which are both 
+stored as vectors of 4 and 256 respectively. This variables and vectors are manipulated 
+as programs are executed by the VM.
+
+load_mem() loads the object code into the 256 word vector. Since our VM currently only
+handles one program at a time, this function is relatively simple loading 1 instruction
+in each vector element starting from 0. If the program is over 256 instructions it will 
+not fit inside the memory constraint of our VM and thus will error and exit.
+
+execute() is called after the object code is stored into memory. It is a while loop that 
+runs instructions until it reaches a halt or error. It first checks that the program does 
+not access memory outside of its base and limit set by the size of the program (i.e. program
+of 16 instructions can only access memory 0-15) otherwise the VM will raise a Seg Fault error 
+and exit. After setting the ir register to the instruction pointed by the pc register, 
+pc is incremented to the next instruction. The instruction is then parsed into the various 
+components using bitwise operations. The logic here is to parse every component possible 
+whether we need it or not, leaving the decision over which component to use for the 
+individual functions. Each components is stored in privite integers as signed decimal 
+values. Based on the opcode parsed, the corresponding function is called via an array
+of function pointers.
+
+The rest of the functions execute the operations described:
+ https://code.google.com/p/virtualoskameltsuruga/wiki/PHASE_I
+
+Getter and setters are for testing. They will only compile with TESTING macro defined
