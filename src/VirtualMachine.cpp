@@ -285,19 +285,25 @@ void VirtualMachine::compr(){
 	clock+=1;
 	if( immed == 0 ) {
 		if( r[rd] < r[rs] ) {
-			sr = sr | 0x00000008; //1000
+			sr = sr | 0x00000008; //01000
+			sr = sr & 0x00000019; //11001
 		} else if( r[rd] == r[rs] ) {
-			sr = sr | 0x00000004; //0100
+			sr = sr | 0x00000004; //00100
+			sr = sr & 0x00000015; //10101
 		} else if( r[rd] > r[rs] ) {
-			sr = sr | 0x00000002; //0010
+			sr = sr | 0x00000002; //00010
+			sr = sr & 0x00000013; //10011
 		}
 	} else { 
 		if( r[rd] < constant ) {
-			sr = sr | 0x00000008; //1000
+			sr = sr | 0x00000008; //01000
+			sr = sr & 0x00000019; //11001
 		} else if( r[rd] == constant ) {
-			sr = sr | 0x00000004; //0100
+			sr = sr | 0x00000004; //00100
+			sr = sr & 0x00000015; //10101
 		} else if( r[rd] > constant  ) {
-			sr = sr | 0x00000002; //0010
+			sr = sr | 0x00000002; //00010
+			sr = sr & 0x00000013; //10011
 		}
 	}
 }
