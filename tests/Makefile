@@ -79,4 +79,4 @@ vm_unittest.o : vm_unittest.cpp \
 	$(CXX) $(CPPFLAGS) $(CXXFLAGS) -c vm_unittest.cpp
 
 vm_unittest : VirtualMachine.o vm_unittest.o gtest_main.a
-	$(CXX) $(CPPFLAGS) $(CXXFLAGS) -lpthread $^ -o $@
+	$(CXX) $(CPPFLAGS) $(CXXFLAGS) -pthread $^ -o $@
