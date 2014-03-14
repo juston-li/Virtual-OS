@@ -442,12 +442,12 @@ TEST_F(VirtualMachineTest, shra){
 	vm.set_rd(0);
 	vm.set_reg(0,0x00000080); //10000000
 	vm.set_sr(0);
-	vm.shr();
+	vm.shra();
 	EXPECT_EQ(0x0000040,vm.get_reg(0)); //01000000
 	int carry = 0x00000001 & vm.get_sr();
 	EXPECT_EQ(0, carry); //carry flag off
 	vm.set_sr(0);
-	vm.shr();						 //00100000
+	vm.shra();						 //00100000
 	carry = 0x00000001 & vm.get_sr();
 	EXPECT_EQ(0x00000020,vm.get_reg(0));
 	EXPECT_EQ(0, carry);//carry flag off
@@ -455,15 +455,15 @@ TEST_F(VirtualMachineTest, shra){
 	//Test switch carry flag on, shift 3 times
 	vm.set_reg(0,0x00000005); //rightmost is 101
 	vm.set_sr(0);
-	vm.shr();
+	vm.shra();
 	carry = 0x00000001 & vm.get_sr();
 	EXPECT_EQ(1, carry);//carry flag on
 	vm.set_sr(0);
-	vm.shr();
+	vm.shra();
 	carry = 0x00000001 & vm.get_sr();
 	EXPECT_EQ(0, carry);//carry flag off
 	vm.set_sr(0);
-	vm.shr();
+	vm.shra();
 	carry = 0x00000001 & vm.get_sr();
 	EXPECT_EQ(1, carry);//carry flag on
 
@@ -471,12 +471,12 @@ TEST_F(VirtualMachineTest, shra){
 	vm.set_rd(0);
 	vm.set_reg(0,0xFFFF8000); //1000
 	vm.set_sr(0);
-	vm.shr();
+	vm.shra();
 	EXPECT_EQ(0xFFFFC000,vm.get_reg(0)); //1100
 	carry = 0x00000001 & vm.get_sr();
 	EXPECT_EQ(0, carry); //carry flag off
 	vm.set_sr(0);
-	vm.shr();						 
+	vm.shra();						 
 	carry = 0x00000001 & vm.get_sr();
 	EXPECT_EQ(0xFFFFE000,vm.get_reg(0)); //1110
 	EXPECT_EQ(0, carry);//carry flag off

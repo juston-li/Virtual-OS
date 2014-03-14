@@ -235,6 +235,12 @@ void VirtualMachine::shl(){
 		sr = sr & 0x0000001E; //0000000000011110
 	}
 	r[rd] = r[rd] << 1;
+	//anything beyond the 16th should only be sign extend
+	if( /*1000000000000000*/ (0x00008000 & r[rd]) ) {
+		r[rd] = r[rd] | 0xFFFF0000; //0000000000011111
+	} else {
+		r[rd] = r[rd] & 0x0000FFFF; //0000000000011110
+	}
 }
 
 void VirtualMachine::shla(){
@@ -247,6 +253,12 @@ void VirtualMachine::shla(){
 		sr = sr & 0x0000001E; //0000000000011110
 	}
 	r[rd] = r[rd] << 1;
+	//anything beyond the 16th should only be sign extend
+	if(0x00008000 & r[rd]) {
+		r[rd] = r[rd] | 0xFFFF0000;
+	} else {
+		r[rd] = r[rd] & 0x0000FFFF;
+	}
 }
 
 void VirtualMachine::shr(){
@@ -259,12 +271,10 @@ void VirtualMachine::shr(){
 		sr = sr & 0x0000001E; //0000000000011110
 	}
 
-	/* In c/c++ the right shift sign extends based on the int being signed/unsigned. Ints default to signed so we have to type case to an unsigned
-	 * to be able to easily logically right shift. The value is then cast back into a signed into the match the vector type.
-	 */
-	unsigned int regVal = (unsigned int)r[rd];
-	regVal = regVal >> 1;
-	r[rd] = (signed int)regVal;
+	/*shr pushes a 0 into the 16th bit which makes this 
+	 *operation awkward as we are using 32bit hex literals */
+	r[rd] = r[rd] & 0x0000FFFF;
+	r[rd] = r[rd] >> 1;
 }
 
 void VirtualMachine::shra(){
@@ -276,7 +286,6 @@ void VirtualMachine::shra(){
 	} else {
 		sr = sr & 0x0000001E; //0000000000011110
 	}
-
 	/* C++ default int type is signed so sign extension happens automatically with a right shift. */
 	r[rd] = r[rd] >> 1;
 }
