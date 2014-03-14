@@ -1,0 +1,50 @@
+Assembler.cpp
+
+Assembler responsible for generating object code as a sequence of decimal-valued integers.
+
+The assembler receives input in the form of an ifstream from a text file containing a
+sequence of operations to perform.  Each operation string is then split into its
+components, including the instruction to be performed and any registers, addresses, or
+constants to be loaded or accessed.  Private integer and unsigned variables are used to
+store the values of the bit patterns for each of these pieces, which are then summed to
+produce the object code for the whole instruction.  Flags are used to mark errors such as
+overflow and out-of-bound constants and addresses, as well as invalid instructions and
+register accesses.
+
+void getInput(std::string inFile) is used to read each instruction line-by-line from the
+input file, and detect when the last instruction has been read. 
+
+void splitInput(const std::string &inputString, std::vector<std::string> &elems) is then 
+called to split the string into the operation, the registers (as applicable), and the
+address or constant value (as applicable), storing these into a vector of strings. 
+
+void getOperation(const std::string &instruct) is called to determine the decimal value
+associated with the first of these pieces, the instruction itself.  Each instruction has a 
+value associated with it, which is shifted left 11 bits to account for its position in the  
+16-bit representation of each instruction.  The immediate value is set and shifted if
+necessary, and any appropriate error flags are set if the instruction is not recognized.
+
+void getDestRegister(const std::string &registerString) and void getSrcRegister(const 
+std::string &registerString) are called if the instruction accesses or stores information
+in one or two registers, and set the appropriate integer variables equal to the register
+number shifted the appropriate number of bits in the 16-bit representation of the 
+instruction (9 for the destination register, 6 for the source register).  An error flag is 
+set if the instruction attempts to access an invalid register.   
+
+void getAddressOrConstant(const std::string &addrString) is called if the instruction
+contains an address or a constant value.  An error flag is set if the address or constant
+fall outside of the accepted bounds (between -128 and 127 for a constant value, and 
+between 0 and 255 for an address).  Otherwise, the value of the address or a constant is
+stored in an integer variable.  To ensure that negative constant values are added 
+correctly to the overall object code, this is cast to an unsigned and shifted 24 bits to
+the left, then 24 bits back to the right.
+
+void outputFile(string inputName) sets the output file to be written to, and ensures that
+it is a .o file. 
+
+std::string Assemble(std::string inputProgram) calls each of the other functions and sums
+the values set by getOperation, getDestRegister, getSrcRegister, and getAddressOrConstant 
+to produce the overall object code as a decimal valued integer. A for loop performs this
+for each instruction in the input file, and writes each code the output.  The error flags
+are checked after each function is called, and if an instruction is invalid, the object 
+code is set to -1.    
